@@ -39,7 +39,10 @@
    enum yytokentype {
      IDENTIFIER = 258,
      BOOL = 259,
-     IMPLIES = 261
+     IMPLIES = 260,
+     OR = 261,
+     AND = 262,
+     NOT = 263
    };
 #endif
 
@@ -50,16 +53,15 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 14 "ltl.y"
+#line 28 "ltl.y"
 
-	char  ival;
-	char  tval;
-	char* sval;
+	char tval;
+	ident_t data;
 
 
 
 /* Line 2068 of yacc.c  */
-#line 63 "ltl.tab.h"
+#line 65 "ltl.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

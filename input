@@ -1,4 +1,6 @@
-p = true;
-q = false;
+hooey = true;
+booey = false;
 
-(p & !q)
+(hooey || !booey) && (hooey -> !booey)
+
+(!booey&(hooey&(hooey&(hooey&!booey))))
