@@ -1,3 +1,4 @@
 all:
-	flex tokens.l
-	gcc -o tracever lex.yy.c -O2
+	bison -d -g ltl.y
+	flex ltl.l
+	gcc -o tracever ltl.tab.c lex.yy.c -O2
