@@ -38,7 +38,7 @@
       know about them.  */
    enum yytokentype {
      IDENTIFIER = 258,
-     BOOL = 259,
+     VALUE = 259,
      IMPLIES = 260,
      FUTURE = 261,
      GLOBAL = 262,
@@ -59,7 +59,7 @@ typedef union YYSTYPE
 /* Line 2068 of yacc.c  */
 #line 23 "ltl_parser.y"
 
-	char tval;
+	int tval;
 	ident_t data;
 
 

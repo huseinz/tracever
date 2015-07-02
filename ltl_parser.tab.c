@@ -77,7 +77,7 @@
 //symbol table entry
 typedef struct{
 	char* sval;
-	char  tval;
+	int   tval;
 }ident_t;
 
 ident_t sym[SYMBOL_TABLE_SIZE];
@@ -116,7 +116,7 @@ int sym_lookup(const char* str);
       know about them.  */
    enum yytokentype {
      IDENTIFIER = 258,
-     BOOL = 259,
+     VALUE = 259,
      IMPLIES = 260,
      FUTURE = 261,
      GLOBAL = 262,
@@ -137,7 +137,7 @@ typedef union YYSTYPE
 /* Line 293 of yacc.c  */
 #line 23 "ltl_parser.y"
 
-	char tval;
+	int tval;
 	ident_t data;
 
 
@@ -457,7 +457,7 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "IDENTIFIER", "BOOL", "IMPLIES",
+  "$end", "error", "$undefined", "IDENTIFIER", "VALUE", "IMPLIES",
   "FUTURE", "GLOBAL", "UNTIL", "NEXT", "OR", "AND", "NOT", "'='", "';'",
   "'('", "')'", "$accept", "ltl_parser", "statement", "expr", 0
 };

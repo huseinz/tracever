@@ -8,7 +8,7 @@
 //symbol table entry
 typedef struct{
 	char* sval;
-	char  tval;
+	int   tval;
 }ident_t;
 
 ident_t sym[SYMBOL_TABLE_SIZE];
@@ -21,14 +21,14 @@ int sym_lookup(const char* str);
 
 %union
 {
-	char tval;
+	int tval;
 	ident_t data;
 }
 
 %type  <tval> expr;
 
 %token <data>  IDENTIFIER
-%token <tval>  BOOL 
+%token <tval>  VALUE
 %left  IMPLIES 
 %left  NEXT UNTIL GLOBAL FUTURE
 %left  AND OR
@@ -63,7 +63,7 @@ statement:
 
 expr:
 	
-	BOOL				{$$ = $1;}
+	VALUE 				{$$ = $1;}
 	| IDENTIFIER			{$$ = sym[ sym_lookup($1.sval) ].tval;}
 	| NOT expr 			{$$ = !$2;}
 	| NEXT expr			{$$ = $2;}

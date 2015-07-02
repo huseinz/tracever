@@ -1,6 +1,6 @@
 ##paramsynth trace verifier
 
-Currently parses LTL formulas but ignores the LTL operators and only evaluates the state portion.
+Currently only evaluates state boolean formulas.
 
 Compile by running make (requires bison and flex)
 
@@ -11,6 +11,7 @@ Variable declaration:
 ```
 A = true;    
 B = false;    
+C = 20;
 //etc.... 
 ```
 
