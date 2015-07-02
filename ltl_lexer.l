@@ -11,7 +11,6 @@ typedef struct{
 
 %%
 
-\n 	      	      	{ ; } 
 [ \t]			{ ; }
 "X"		      	{ 					return NEXT; 		}
 "U"		      	{ 					return UNTIL; 		}
@@ -21,7 +20,6 @@ typedef struct{
 "false"		      	{   yylval.tval = 0; 			return BOOL;		}
 [a-zA-Z][a-zA-Z0-9_]* 	{   yylval.data.sval = strdup(yytext); 	return IDENTIFIER;	}
 "->"|"=>"	      	{   yylval.data.sval = strdup(yytext); 	return IMPLIES;		}
-"<->"		      	{ ; }
 "|"|"||"|"+"	      	{    					return OR;		} 
 "&"|"&&"|"*"	      	{   					return AND;		}
 "!"|"-"		      	{   					return NOT;		}
@@ -29,6 +27,7 @@ typedef struct{
 ")"		      	{   					return *yytext;		}
 "="		      	{   					return *yytext;		}
 ";"		      	{   					return *yytext;		}
+\n 	      	      	{ ; } 
 .		      	{ ; }
 
 %%

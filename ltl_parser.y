@@ -43,15 +43,15 @@ ltl_parser:
 
 statement:
 	expr	 			{ 
-					printf("expression returns %s\n", 
-					$1 == 0 ? "false" : "true"); 
+						printf("expression returns %s\n", 
+						$1 == 0 ? "false" : "true"); 
 					}
 
 	| IDENTIFIER '=' expr ';'	{ 
-					printf("set %s to %s\n", 
-					$1.sval, 
-					$3 == 0 ? "false" : "true"); 
-
+						printf("set %s to %s\n", 
+						$1.sval, 
+						$3 == 0 ? "false" : "true"); 
+					//update or add IDENTIFIER to symbol table 
 					$1.tval = $3; 
 					if( sym_lookup($1.sval) == 0 ) 
 						sym[ sym_index++ ] = $1;
@@ -66,9 +66,13 @@ expr:
 	BOOL				{$$ = $1;}
 	| IDENTIFIER			{$$ = sym[ sym_lookup($1.sval) ].tval;}
 	| NOT expr 			{$$ = !$2;}
+	| NEXT expr			{$$ = $2;}
+	| UNTIL expr			{$$ = $2;}
+	| GLOBAL expr			{$$ = $2;}
+	| FUTURE  expr			{$$ = $2;} 
+	| expr IMPLIES expr 		{$$ = !$1 || $3;}
 	| expr AND expr 		{$$ = $1 && $3;}
 	| expr OR expr 			{$$ = $1 || $3;}
-	| expr IMPLIES expr 		{$$ = !$1 || $3;}
 	| '(' expr ')'  		{$$ = $2;}
 	;
 
@@ -78,6 +82,7 @@ void yyerror(const char* s){
 	printf("Parse error: %s\n", s);
 }
 
+//TODO implement this as a hash table or something better
 int sym_lookup(const char* str){
 	int i;
 	if( str == NULL )

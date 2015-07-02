@@ -1,4 +1,6 @@
 A = true;
 B = false;
 
-!A & A + !A & B + (B + A)*A + (B + A)*!B
+!A & A + U !A & B + (B + A)*A + (B + A)*!B
+
+A & U B
