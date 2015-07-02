@@ -1,6 +1,4 @@
-hooey = true;
-booey = false;
+A = true;
+B = false;
 
-(hooey || !booey) && (hooey -> !booey)
-
-(!booey&(hooey&(hooey&(hooey&!booey))))
+!A & A + !A & B + (B + A)*A + (B + A)*!B
