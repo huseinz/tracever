@@ -21,7 +21,7 @@ int sym_lookup(const char* str);
 
 %union
 {
-	int tval;
+	long tval;
 	ident_t data;
 }
 
@@ -29,6 +29,7 @@ int sym_lookup(const char* str);
 
 %token <data>  IDENTIFIER
 %token <tval>  INTEGER
+
 %left  IMPLIES 
 %left  NEXT UNTIL GLOBAL FUTURE
 %left  AND OR
