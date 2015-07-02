@@ -1,5 +1,5 @@
-A = true;
-B = false;
+A = 20;
+B = 0;
 
 !A & A + U !A & B + (B + A)*A + (B + A)*!B
 

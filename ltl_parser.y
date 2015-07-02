@@ -28,10 +28,11 @@ int sym_lookup(const char* str);
 %type  <tval> expr;
 
 %token <data>  IDENTIFIER
-%token <tval>  VALUE
+%token <tval>  INTEGER
 %left  IMPLIES 
 %left  NEXT UNTIL GLOBAL FUTURE
 %left  AND OR
+%left  LESS_THAN GTR_THAN GTR_OR_EQ LESS_OR_EQ EQUALS
 %left  NOT
 
 %% 
@@ -63,7 +64,7 @@ statement:
 
 expr:
 	
-	VALUE 				{$$ = $1;}
+	INTEGER 			{$$ = $1;}
 	| IDENTIFIER			{$$ = sym[ sym_lookup($1.sval) ].tval;}
 	| NOT expr 			{$$ = !$2;}
 	| NEXT expr			{$$ = $2;}

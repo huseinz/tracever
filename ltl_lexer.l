@@ -16,11 +16,15 @@ typedef struct{
 "U"		      	{ 					return UNTIL; 		}
 "G"		      	{ 					return GLOBAL; 		}
 "F"		      	{ 					return FUTURE; 		}
-"true"    	      	{   yylval.tval = 1; 			return VALUE; 		}
-"false"		      	{   yylval.tval = 0; 			return VALUE;		}
+"true"    	      	{   yylval.tval = 1; 			return INTEGER; 	}
+"false"		      	{   yylval.tval = 0; 			return INTEGER;		}
 [a-zA-Z][a-zA-Z0-9_]* 	{   yylval.data.sval = strdup(yytext); 	return IDENTIFIER;	}
-[0-9]*			{   yylval.tval	     = strtol(yytext, NULL, 10); return VALUE;  }
+[0-9]*			{   yylval.tval	     = strtol(yytext, NULL, 10); return INTEGER;} //make this safer
 "->"|"=>"	      	{   yylval.data.sval = strdup(yytext); 	return IMPLIES;		}
+"<"		      	{ 					return LESS_THAN; 	}
+">"		      	{ 					return GTR_THAN; 	}
+">="		      	{ 					return GTR_OR_EQ; 	}
+"<="		      	{ 					return LESS_OR_EQ; 	}
 "|"|"||"|"+"	      	{    					return OR;		} 
 "&"|"&&"|"*"	      	{   					return AND;		}
 "!"|"-"		      	{   					return NOT;		}

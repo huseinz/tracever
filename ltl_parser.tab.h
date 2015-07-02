@@ -38,7 +38,7 @@
       know about them.  */
    enum yytokentype {
      IDENTIFIER = 258,
-     VALUE = 259,
+     INTEGER = 259,
      IMPLIES = 260,
      FUTURE = 261,
      GLOBAL = 262,
@@ -46,7 +46,12 @@
      NEXT = 264,
      OR = 265,
      AND = 266,
-     NOT = 267
+     EQUALS = 267,
+     LESS_OR_EQ = 268,
+     GTR_OR_EQ = 269,
+     GTR_THAN = 270,
+     LESS_THAN = 271,
+     NOT = 272
    };
 #endif
 
@@ -65,7 +70,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 69 "ltl_parser.tab.h"
+#line 74 "ltl_parser.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
