@@ -74,10 +74,12 @@
 //#define YYDEBUG 1
 #define SYMBOL_TABLE_SIZE 50
 
+extern int yylex();
+
 //symbol table entry
 typedef struct{
 	char* sval;
-	int   tval;
+	long   tval;
 }ident_t;
 
 ident_t sym[SYMBOL_TABLE_SIZE];
@@ -88,7 +90,7 @@ int sym_lookup(const char* str);
 
 
 /* Line 268 of yacc.c  */
-#line 92 "ltl_parser.tab.c"
+#line 94 "ltl_parser.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -140,15 +142,15 @@ typedef union YYSTYPE
 {
 
 /* Line 293 of yacc.c  */
-#line 23 "ltl_parser.y"
+#line 25 "ltl_parser.y"
 
-	int tval;
+	long tval;
 	ident_t data;
 
 
 
 /* Line 293 of yacc.c  */
-#line 152 "ltl_parser.tab.c"
+#line 154 "ltl_parser.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -160,7 +162,7 @@ typedef union YYSTYPE
 
 
 /* Line 343 of yacc.c  */
-#line 164 "ltl_parser.tab.c"
+#line 166 "ltl_parser.tab.c"
 
 #ifdef short
 # undef short
@@ -453,8 +455,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    41,    41,    42,    46,    51,    62,    67,    68,    69,
-      70,    71,    72,    73,    74,    75,    76,    77
+       0,    44,    44,    45,    49,    54,    65,    70,    71,    72,
+      73,    74,    75,    76,    77,    78,    79,    80
 };
 #endif
 
@@ -1403,7 +1405,7 @@ yyreduce:
         case 4:
 
 /* Line 1806 of yacc.c  */
-#line 46 "ltl_parser.y"
+#line 49 "ltl_parser.y"
     { 
 						printf("expression returns %s\n", 
 						(yyvsp[(1) - (1)].tval) == 0 ? "false" : "true"); 
@@ -1413,7 +1415,7 @@ yyreduce:
   case 5:
 
 /* Line 1806 of yacc.c  */
-#line 51 "ltl_parser.y"
+#line 54 "ltl_parser.y"
     { 
 						printf("set %s to %s\n", 
 						(yyvsp[(1) - (4)].data).sval, 
@@ -1430,84 +1432,84 @@ yyreduce:
   case 7:
 
 /* Line 1806 of yacc.c  */
-#line 67 "ltl_parser.y"
+#line 70 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(1) - (1)].tval);}
     break;
 
   case 8:
 
 /* Line 1806 of yacc.c  */
-#line 68 "ltl_parser.y"
+#line 71 "ltl_parser.y"
     {(yyval.tval) = sym[ sym_lookup((yyvsp[(1) - (1)].data).sval) ].tval;}
     break;
 
   case 9:
 
 /* Line 1806 of yacc.c  */
-#line 69 "ltl_parser.y"
+#line 72 "ltl_parser.y"
     {(yyval.tval) = !(yyvsp[(2) - (2)].tval);}
     break;
 
   case 10:
 
 /* Line 1806 of yacc.c  */
-#line 70 "ltl_parser.y"
+#line 73 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(2) - (2)].tval);}
     break;
 
   case 11:
 
 /* Line 1806 of yacc.c  */
-#line 71 "ltl_parser.y"
+#line 74 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(2) - (2)].tval);}
     break;
 
   case 12:
 
 /* Line 1806 of yacc.c  */
-#line 72 "ltl_parser.y"
+#line 75 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(2) - (2)].tval);}
     break;
 
   case 13:
 
 /* Line 1806 of yacc.c  */
-#line 73 "ltl_parser.y"
+#line 76 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(2) - (2)].tval);}
     break;
 
   case 14:
 
 /* Line 1806 of yacc.c  */
-#line 74 "ltl_parser.y"
+#line 77 "ltl_parser.y"
     {(yyval.tval) = !(yyvsp[(1) - (3)].tval) || (yyvsp[(3) - (3)].tval);}
     break;
 
   case 15:
 
 /* Line 1806 of yacc.c  */
-#line 75 "ltl_parser.y"
+#line 78 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(1) - (3)].tval) && (yyvsp[(3) - (3)].tval);}
     break;
 
   case 16:
 
 /* Line 1806 of yacc.c  */
-#line 76 "ltl_parser.y"
+#line 79 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(1) - (3)].tval) || (yyvsp[(3) - (3)].tval);}
     break;
 
   case 17:
 
 /* Line 1806 of yacc.c  */
-#line 77 "ltl_parser.y"
+#line 80 "ltl_parser.y"
     {(yyval.tval) = (yyvsp[(2) - (3)].tval);}
     break;
 
 
 
 /* Line 1806 of yacc.c  */
-#line 1511 "ltl_parser.tab.c"
+#line 1513 "ltl_parser.tab.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1738,7 +1740,7 @@ yyreturn:
 
 
 /* Line 2067 of yacc.c  */
-#line 80 "ltl_parser.y"
+#line 83 "ltl_parser.y"
 
 
 void yyerror(const char* s){

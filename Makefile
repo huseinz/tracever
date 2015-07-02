@@ -1,7 +1,7 @@
 all:
-	bison -d -g ltl_parser.y
+	bison --language=c -W -d -g ltl_parser.y
 	flex  -Cem -v --header-file=lex.yy.h ltl_lexer.l 
-	gcc -o tracever *.c -O2 
+	gcc -Wall -o tracever *.c -O2 
 debug:
 	bison --debug -d -g ltl_parser.y
 	flex -d -Cem -v --header-file=lex.yy.h ltl_lexer.l

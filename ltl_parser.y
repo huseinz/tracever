@@ -5,6 +5,8 @@
 //#define YYDEBUG 1
 #define SYMBOL_TABLE_SIZE 50
 
+extern int yylex();
+
 //symbol table entry
 typedef struct{
 	char* sval;

@@ -62,9 +62,9 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 23 "ltl_parser.y"
+#line 25 "ltl_parser.y"
 
-	int tval;
+	long tval;
 	ident_t data;
 
 
