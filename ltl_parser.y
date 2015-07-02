@@ -8,7 +8,7 @@
 //symbol table entry
 typedef struct{
 	char* sval;
-	int   tval;
+	long   tval;
 }ident_t;
 
 ident_t sym[SYMBOL_TABLE_SIZE];
