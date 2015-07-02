@@ -1,3 +1,10 @@
+/*
+	Parameter Synthesis Trace Verifier
+
+	Currently parses LTL formulas but will ignore LTL 
+	operators and only evaluate the state portion.
+*/
+
 #include "lex.yy.h"
 
 int main(int argc, char* argv[]) {
