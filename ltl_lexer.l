@@ -20,7 +20,7 @@ typedef struct{
 "false"		      	{   yylval.tval = 0; 			return INTEGER;		}
 [a-zA-Z][a-zA-Z0-9_]* 	{   yylval.data.sval = strdup(yytext); 	return IDENTIFIER;	}
 [0-9]*			{   yylval.tval      = strtol(yytext, NULL, 10); return INTEGER;} //make this safer
-"->"		      	{   yylval.data.sval = strdup(yytext); 	return IMPLIES;		}
+"->"		      	{   					return IMPLIES;		}
 "<"		      	{ 					return LESS_THAN; 	}
 ">"		      	{ 					return GTR_THAN; 	}
 ">="		      	{ 					return GTR_OR_EQ; 	}

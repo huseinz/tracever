@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//#define YYDEBUG 1
 #define SYMBOL_TABLE_SIZE 50
 
 extern int yylex();
@@ -52,8 +51,9 @@ statement:
 					}
 
 	| IDENTIFIER '=' expr ';'	{ 
-						printf("set %s to %s\n", 
-						$1.sval, 
+						printf("set %s to %ld \"%s\"\n", 
+						$1.sval,
+						$3,
 						$3 == 0 ? "false" : "true"); 
 					//update or add IDENTIFIER to symbol table 
 					$1.tval = $3; 
