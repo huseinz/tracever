@@ -39,13 +39,14 @@ int sym_lookup(const char* str);
 %precedence  	NEXT GLOBAL FUTURE
 %precedence  	NOT
 
-%start statement
+//%start statement
 
 %% 
 
-/*ltl_parser:
+ltl_parser:
 	ltl_parser statement  			
-	;*/
+	| %empty
+	;
 
 statement:
 	expr	 			{ 
