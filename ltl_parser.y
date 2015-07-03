@@ -35,15 +35,15 @@ int sym_lookup(const char* str);
 %nonassoc  	IMPLIES 
 %left  		OR 
 %left  		AND
-%left  <sval> 	COMPARATOR
-%precedence  	NEXT GLOBAL FUTURE
-%precedence  	NOT
+%right  <sval> 	COMPARATOR
+%token  	NEXT GLOBAL FUTURE
+%token  	NOT
 
 %% 
 
 ltl_parser:
 	ltl_parser statement  			
-	| %empty
+	| 
 	;
 
 statement:
