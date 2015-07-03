@@ -35,11 +35,9 @@ int sym_lookup(const char* str);
 %right  	IMPLIES 
 %precedence	OR 
 %precedence 	AND
-%right  <sval> 	COMPARATOR
+%right <sval> 	COMPARATOR
 %precedence  	NEXT GLOBAL FUTURE
 %precedence  	NOT
-
-//%start statement
 
 %% 
 
@@ -92,7 +90,19 @@ expr:
 	| expr UNTIL expr	{$$ = $3;}
 	| expr RELEASE expr	{$$ = $3;}
 	| expr IMPLIES expr 	{$$ = !$1 || $3;printf("%ld -> %ld returns %ld\n", $1, $3, $$);}
-	| expr COMPARATOR expr	{$$ = $3;}
+	| expr COMPARATOR expr	{
+					if( strcmp($2, "<") == 0)
+						$$ = $1 < $3;
+					if( strcmp($2, ">") == 0)
+						$$ = $1 > $3;
+					if( strcmp($2, "<=") == 0)
+						$$ = $1 <= $3;
+					if( strcmp($2, ">=") == 0)
+						$$ = $1 >= $3;
+					if( (strcmp($2, "<->") == 0) || (strcmp($2, "==") == 0))
+						$$ = $1 == $3;
+					printf("%ld %s %ld returns %ld\n", $1, $2, $3, $$);
+				}
 	| '(' expr ')'  	{$$ = $2;}
 	;
 

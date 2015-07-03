@@ -8,6 +8,8 @@ Compile by running make (requires bison and flex)
 
 `tracever [file]`
 
+will read from stdin if no file given
+
 ####Syntax
 
 Variable declaration:

@@ -20,11 +20,11 @@
 [0-9]*			{ yylval.tval = strtol(yytext, NULL, 10); return INTEGER;} //make this safer
 [a-zA-Z][a-zA-Z0-9_]* 	{ yylval.sval = strdup(yytext); 	return IDENTIFIER;	}
 "->"		      	{   					return IMPLIES;		}
-"<"		      	{ 					return COMPARATOR; 	}
-">"		      	{ 					return COMPARATOR; 	}
-">="		      	{ 					return COMPARATOR; 	}
-"<="		      	{ 					return COMPARATOR; 	}
-"=="|"<->" 		{					return COMPARATOR; 	}
+"<"		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
+">"		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
+">="		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
+"<="		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
+"=="|"<->" 		{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
 "||"		    	{					return OR;		} 
 "&&"	      		{   					return AND;		}
 "!"		      	{   					return NOT;		}
