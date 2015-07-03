@@ -9,26 +9,28 @@ Syntax:
 Variable declaration:
 
 ```
-A = true;    
-B = false;    
+A = true;    #1
+B = false;   #0
 C = 20;
-//etc.... 
+#etc.... 
 ```
 
 State operators:
 
-`!`	    : 	NOT operator      
-`&&` :	AND operator       
-`||` : 	OR  operator       
-`->`:	IMPLIES operator   
+`!`	        : NOT 
+`&&`        :	AND 
+`||`        : OR  
+`->`        :	IMPLIES 
+`<->`       : EQUIV
 
 Unary LTL operators:
 
-`X`         : 	true next state     
-`G`         : 	always true (globally)     
-`F`	    : 	eventually (in the future) 
+`X`         : 	**N**ext
+`G`         : 	**G**lobally
+`F`	        : 	**F**uture
 
 
 Binary LTL operators:
 
-`U`         : 	first argument must be true until the second argument becomes true 
+`U`         : 	**U**ntil
+`R`         :   **R**elease
