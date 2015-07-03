@@ -4,7 +4,7 @@ Currently only evaluates state boolean formulas.
 
 Compile by running make (requires bison and flex)
 
-Syntax:
+####Syntax:
 
 Variable declaration:
 
@@ -17,20 +17,20 @@ C = 20;
 
 State operators:
 
-`!`	        : NOT 
-`&&`        :	AND 
-`||`        : OR  
-`->`        :	IMPLIES 
-`<->`       : EQUIV
+`!`	: NOT    
+`&&`	: AND    
+`||`    : OR     
+`->`    : IMPLIES       
+`<->`   : EQUIV      
 
 Unary LTL operators:
 
-`X`         : 	**N**ext
-`G`         : 	**G**lobally
-`F`	        : 	**F**uture
+`X`     : **N**ext   
+`G`     : **G**lobally    
+`F`     : **F**uture    
 
 
 Binary LTL operators:
 
-`U`         : 	**U**ntil
-`R`         :   **R**elease
+`U`     : **U**ntil     
+`R`     : **R**elease     
