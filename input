@@ -1,4 +1,7 @@
 A = 20;
-B = 0;
+B = 1;
+C = 0;
 
-(A | U B) -> B
+# this is a comment 
+(A && !C) && (A || B) -> (B && !C)
+3 ||!C && A && B -> B && !C
