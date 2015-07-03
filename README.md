@@ -4,7 +4,11 @@ Currently only evaluates state boolean formulas.
 
 Compile by running make (requires bison and flex)
 
-####Syntax:
+####Synopsis
+
+`tracever [file]`
+
+####Syntax
 
 Variable declaration:
 

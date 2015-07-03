@@ -32,19 +32,20 @@ int sym_lookup(const char* str);
 %token <sval>	IDENTIFIER
 
 %nonassoc  	UNTIL RELEASE 
-%nonassoc  	IMPLIES 
-%left  		OR 
-%left  		AND
+%right  	IMPLIES 
+%precedence	OR 
+%precedence 	AND
 %right  <sval> 	COMPARATOR
-%token  	NEXT GLOBAL FUTURE
-%token  	NOT
+%precedence  	NEXT GLOBAL FUTURE
+%precedence  	NOT
+
+%start statement
 
 %% 
 
-ltl_parser:
+/*ltl_parser:
 	ltl_parser statement  			
-	| 
-	;
+	;*/
 
 statement:
 	expr	 			{ 
