@@ -9,7 +9,7 @@ extern int yylex();
 //symbol table entry
 typedef struct{
 	char*  sval;
-	long   tval;
+	double   tval;
 }ident_t;
 
 ident_t sym[SYMBOL_TABLE_SIZE];
@@ -23,12 +23,14 @@ int sym_lookup(const char* str);
 %union
 {
 	long  tval;
+	double fval;
 	char* sval;
 }
 
 %type  <tval>	expr;
 
 %token <tval>	INTEGER
+%token <fval>   REAL
 %token <sval>	IDENTIFIER
 
 %nonassoc  	UNTIL RELEASE 
@@ -53,8 +55,8 @@ statement:
 							$1 == 0 ? "false" : "true"); 
 					}
 
-	| IDENTIFIER '=' expr ';'	{ 
-						printf("set %s to %ld \n", $1, $3); 
+	| IDENTIFIER '=' REAL ';'	{ 
+						printf("set %s to %.2lf \n", $1, $3); 
 
 						//update or add IDENTIFIER to symbol table 
 						if( sym_lookup($1) == 0 ) {
@@ -65,13 +67,14 @@ statement:
 							sym[ sym_lookup($1) ].tval = $3; 
 						}
 					}
-	| ';'
+	| ';'				{ ; }
 	;
 
 	//TODO implement LTL ops 	
 expr:
-	INTEGER 		{$$ = $1;}
-	| IDENTIFIER		{	
+	//INTEGER 		{$$ = $1;}
+	//| REAL			{$$ = $1;}
+	IDENTIFIER		{	
 					//check if identifier is not declared
 					if(sym_lookup($1) == 0){
 						fprintf(stderr, 
@@ -90,18 +93,28 @@ expr:
 	| expr UNTIL expr	{$$ = $3;}
 	| expr RELEASE expr	{$$ = $3;}
 	| expr IMPLIES expr 	{$$ = !$1 || $3;printf("%ld -> %ld returns %ld\n", $1, $3, $$);}
-	| expr COMPARATOR expr	{
+	| IDENTIFIER COMPARATOR REAL	{
+					double ident_val;
+					//check if identifier is not declared
+					if(sym_lookup($1) == 0){
+						fprintf(stderr, 
+						"Parse error: variable '%s' not defined.\n", $1);
+						YYERROR;
+					} else { 
+						 ident_val = sym[sym_lookup($1)].tval;
+					}
+
 					if( strcmp($2, "<") == 0)
-						$$ = $1 < $3;
+						$$ = ident_val < $3;
 					if( strcmp($2, ">") == 0)
-						$$ = $1 > $3;
+						$$ = ident_val > $3;
 					if( strcmp($2, "<=") == 0)
-						$$ = $1 <= $3;
+						$$ = ident_val <= $3;
 					if( strcmp($2, ">=") == 0)
-						$$ = $1 >= $3;
+						$$ = ident_val >= $3;
 					if( (strcmp($2, "<->") == 0) || (strcmp($2, "==") == 0))
-						$$ = $1 == $3;
-					printf("%ld %s %ld returns %ld\n", $1, $2, $3, $$);
+						$$ = ident_val == $3;
+					printf("%s %s %.2lf returns %ld\n", $1, $2, $3, $$);
 				}
 	| '(' expr ')'  	{$$ = $2;}
 	;
