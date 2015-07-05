@@ -70,10 +70,7 @@ statement:
 	| ';'				{ ; }
 	;
 
-	//TODO implement LTL ops 	
 expr:
-	//INTEGER 		{$$ = $1;}
-	//| REAL			{$$ = $1;}
 	IDENTIFIER		{	
 					//check if identifier is not declared
 					if(sym_lookup($1) == 0){
