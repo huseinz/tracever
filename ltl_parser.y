@@ -32,12 +32,12 @@ int sym_lookup(const char* str);
 %token <tval>	INTEGER
 %token <fval>   REAL
 %token <sval>	IDENTIFIER
+%token <sval> 	COMPARATOR
 
-%nonassoc  	UNTIL RELEASE 
+%nonassoc  	UNTIL  
 %right  	IMPLIES 
 %precedence	OR 
 %precedence 	AND
-%right <sval> 	COMPARATOR
 %precedence  	NEXT GLOBAL FUTURE
 %precedence  	NOT
 
@@ -91,7 +91,6 @@ expr:
 	| expr OR expr 		{$$ = $1 || $3; printf("%ld || %ld returns %ld\n", $1, $3, $$);}
 	| expr AND expr 	{$$ = $1 && $3; printf("%ld && %ld returns %ld\n", $1, $3, $$);}
 	| expr UNTIL expr	{$$ = $3;}
-	| expr RELEASE expr	{$$ = $3;}
 	| expr IMPLIES expr 	{$$ = !$1 || $3;printf("%ld -> %ld returns %ld\n", $1, $3, $$);}
 	| IDENTIFIER COMPARATOR REAL	{
 					double ident_val;
