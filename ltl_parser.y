@@ -27,12 +27,15 @@ int sym_lookup(const char* str);
 	char* sval;
 }
 
+%destructor { free ($$); } <sval>
+
 %type  <tval>	expr;
 
 %token <tval>	INTEGER
 %token <fval>   REAL
 %token <sval>	IDENTIFIER
 %token <sval> 	COMPARATOR
+%token DATA
 
 %nonassoc  	UNTIL  
 %right  	IMPLIES 
@@ -45,7 +48,7 @@ int sym_lookup(const char* str);
 
 ltl_parser:
 	ltl_parser statement  			
-	| %empty
+	| %empty  
 	;
 
 statement:
@@ -67,6 +70,13 @@ statement:
 							sym[ sym_lookup($1) ].tval = $3; 
 						}
 					}
+	//accept token //pass off automata
+	| DATA				{ 	
+						int i;
+						for(i = 1; i < sym_index; i++)
+							free(sym[i].sval);
+						YYACCEPT; 
+					} 
 	| ';'				{ ; }
 	;
 
@@ -80,16 +90,38 @@ expr:
 					} else { 
 						$$ = sym[sym_lookup($1)].tval;
 					}
+					free($1);
 				}
-	| NOT expr 		{$$ = !$2; printf("!%ld returns %ld\n", $2, $$);}
-	| NEXT expr		{$$ = $2;}
-	| GLOBAL expr		{$$ = $2;}
-	| FUTURE  expr		{$$ = $2;} 
-	| expr OR expr 		{$$ = $1 || $3; printf("%ld || %ld returns %ld\n", $1, $3, $$);}
-	| expr AND expr 	{$$ = $1 && $3; printf("%ld && %ld returns %ld\n", $1, $3, $$);}
-	| expr UNTIL expr	{$$ = $3;}
-	| expr IMPLIES expr 	{$$ = !$1 || $3;printf("%ld -> %ld returns %ld\n", $1, $3, $$);}
+	| NOT expr 		{
+					$$ = !$2; 
+					printf("!%ld returns %ld\n", $2, $$);
+				}
+	| NEXT expr		{
+					$$ = $2;
+				}
+	| GLOBAL expr		{
+					$$ = $2;
+				}
+	| FUTURE  expr		{
+					$$ = $2;
+				} 
+	| expr OR expr 		{
+					$$ = $1 || $3; 
+					printf("%ld || %ld returns %ld\n", $1, $3, $$);
+				}
+	| expr AND expr 	{
+					$$ = $1 && $3; 
+					printf("%ld && %ld returns %ld\n", $1, $3, $$);
+				}
+	| expr UNTIL expr	{
+					$$ = $3;
+				}
+	| expr IMPLIES expr 	{
+					$$ = !$1 || $3;
+					printf("%ld -> %ld returns %ld\n", $1, $3, $$);
+				}
 	| IDENTIFIER COMPARATOR REAL	{
+
 					double ident_val;
 					//check if identifier is not declared
 					if(sym_lookup($1) == 0){
@@ -111,8 +143,11 @@ expr:
 					if( (strcmp($2, "<->") == 0) || (strcmp($2, "==") == 0))
 						$$ = ident_val == $3;
 					printf("%s %s %.2lf returns %ld\n", $1, $2, $3, $$);
+
+					free($1); 
+					free($2);
 				}
-	| '(' expr ')'  	{$$ = $2;}
+	| '(' expr ')'  	{ $$ = $2; }
 	;
 
 %%
