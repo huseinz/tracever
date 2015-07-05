@@ -29,7 +29,9 @@ int sym_lookup(const char* str);
 
 %destructor { free ($$); } <sval>
 
-%type  <tval>	expr;
+%type  <tval>	stateformula;
+%type  <tval>   automata;
+%type  <tval>   ltlformula;
 
 %token <tval>	INTEGER
 %token <fval>   REAL
@@ -37,7 +39,7 @@ int sym_lookup(const char* str);
 %token <sval> 	COMPARATOR
 %token DATA
 
-%nonassoc  	UNTIL  
+%precedence  	UNTIL  
 %right  	IMPLIES 
 %precedence	OR 
 %precedence 	AND
@@ -52,8 +54,8 @@ ltl_parser:
 	;
 
 statement:
-	expr	 			{ 
-						printf("expression returns %ld \"%s\"\n\n",
+	automata	 			{ 
+						printf("'automata' returns %ld \"%s\"\n\n",
 							$1,
 							$1 == 0 ? "false" : "true"); 
 					}
@@ -80,7 +82,22 @@ statement:
 	| ';'				{ ; }
 	;
 
-expr:
+automata:
+	ltlformula             {$$ = $1;}
+	| automata AND automata { $$ = $1 && $3; }
+	| automata OR automata { $$ = $1 || $3;}
+	;
+
+ltlformula:
+	stateformula        { $$ = $1;}
+	| NEXT ltlformula { $$ = $2;}
+	| GLOBAL ltlformula { $$ = $2;}
+	| FUTURE ltlformula { $$ = $2;}
+	| ltlformula UNTIL ltlformula { $$ = $3;}
+	| '(' ltlformula ')' {$$ = $2;}
+	;
+
+stateformula:
 	IDENTIFIER		{	
 					//check if identifier is not declared
 					if(sym_lookup($1) == 0){
@@ -92,31 +109,19 @@ expr:
 					}
 					free($1);
 				}
-	| NOT expr 		{
+	| NOT stateformula 		{
 					$$ = !$2; 
 					printf("!%ld returns %ld\n", $2, $$);
 				}
-	| NEXT expr		{
-					$$ = $2;
-				}
-	| GLOBAL expr		{
-					$$ = $2;
-				}
-	| FUTURE  expr		{
-					$$ = $2;
-				} 
-	| expr OR expr 		{
+	| stateformula OR stateformula 		{
 					$$ = $1 || $3; 
 					printf("%ld || %ld returns %ld\n", $1, $3, $$);
 				}
-	| expr AND expr 	{
+	| stateformula AND stateformula 	{
 					$$ = $1 && $3; 
 					printf("%ld && %ld returns %ld\n", $1, $3, $$);
 				}
-	| expr UNTIL expr	{
-					$$ = $3;
-				}
-	| expr IMPLIES expr 	{
+	| stateformula IMPLIES stateformula 	{
 					$$ = !$1 || $3;
 					printf("%ld -> %ld returns %ld\n", $1, $3, $$);
 				}
@@ -147,7 +152,7 @@ expr:
 					free($1); 
 					free($2);
 				}
-	| '(' expr ')'  	{ $$ = $2; }
+	| '(' stateformula ')'  	{ $$ = $2; }
 	;
 
 %%

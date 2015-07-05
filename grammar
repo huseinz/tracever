@@ -1,0 +1,49 @@
+//outline of the parser's grammar 
+
+//definition of alternating automaton
+Automata ::=
+	epsilon
+	| < v, Automata, f >
+	| Automata && Automata
+	| Automata || Automata
+
+
+//LTL parser grammar 
+
+ltlparser:
+	ltlparser statement
+	| %empty
+	;
+
+statement:
+	automata
+	| DATA (YYACCEPT)
+	| ';'
+	;
+
+automata:
+	ltlformula
+	| automata AND automata
+	| automata OR automata
+	;
+
+ltlformula:
+	stateformula
+	| NEXT   ltlformula
+	| GLOBAL ltlformula
+	| FUTURE ltlformula
+	| ltlformula UNTIL ltlformula
+	| '(' stateformula ')'
+	;
+
+stateformula:
+	IDENTIFIER
+	| NOT stateformula
+	| stateformula AND stateformula
+	| stateformula OR stateformula
+	| stateformula IMPLIES stateformula
+	| IDENTIFIER COMPARATOR REAL
+	| '(' stateformula ')'
+	;
+
+
