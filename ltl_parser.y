@@ -58,7 +58,7 @@ ltl_parser:
 	;
 
 statement:
-	automata	 	{ 
+	automata ';'	 	{ 
 				/*	printf("'automata' returns %ld \"%s\"\n\n",
 						$1,
 						$1 == 0 ? "false" : "true"); */
@@ -71,7 +71,7 @@ statement:
 				}
 
 	//deprecated
-	| IDENTIFIER '=' REAL ';'{ 
+/*	| IDENTIFIER '=' REAL ';'{ 
 					printf("set %s to %.2lf \n", $1, $3); 
 
 					//update or add IDENTIFIER to symbol table 
@@ -79,7 +79,7 @@ statement:
 						sym[ sym_index ] = $1;
 						sym_index++;
 					}
-				}
+				}*/
 	//accept token //pass off automata
 	| DATA			{ 	
 					int i;
@@ -116,10 +116,12 @@ ltlformula:
 					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
 					Automata* GLOBAL_node = create_node(AND_N, 0, TRUE_node, $2);
 					TRUE_node->left = GLOBAL_node;
+					TRUE_node->accepting = 1;
+					GLOBAL_node->accepting = 1;
 					$$ = GLOBAL_node;
 					puts("Created GLOBAL node");
 				}
-	| FUTURE ltlformula 	{ /*$$ = $2;*/
+	| FUTURE stateformula 	{ /*$$ = $2;*/
 					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
 					Automata* FUTURE_node = create_node(OR_N, 0, TRUE_node, $2);
 					TRUE_node->left = FUTURE_node;
@@ -131,11 +133,12 @@ ltlformula:
 					Automata* UNTILB_node = create_node(AND_N, 0, TRUE_node, $1);
 					Automata* UNTIL_node  = create_node(OR, 0, $3, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
+					UNTIL_node->accepting = 1;
 					$$ = UNTIL_node;
 					puts("Created UNTIL node");
 				}
-	| '(' ltlformula ')' 	{	$$ = $2;
-				}
+//	| '(' ltlformula ')' 	{	$$ = $2;
+//				}
 	| '(' stateformula ')'  {	$$ = $2;
 				}
 	;
@@ -148,6 +151,7 @@ stateformula:
 						sym[ sym_index++ ] = $1;
 					
 					Automata* IDENT_node = create_node(IDENT_N, sym_lookup($1), NULL, NULL);
+					IDENT_node->accepting = 1;
 					$$ = IDENT_node;
 					puts("Created IDENTIFIER node");
 					
@@ -155,6 +159,7 @@ stateformula:
 				}
 	| NOT stateformula 	{
 					Automata* NOT_node = create_node(NOT_N, 0, $2, NULL);
+					NOT_node->accepting = 1;
 					$$ = NOT_node;
 					puts("Created NOT node");
 				}
@@ -182,6 +187,7 @@ stateformula:
 						sym[ sym_index++ ] = $1;
 					
 					Automata* COMPARE_node = create_node(COMPARATOR_N, sym_lookup($1), NULL, NULL);
+					COMPARE_node->accepting = 1;
 					COMPARE_node->comparison_val = $3;
 
 					comparator_t comparator;
@@ -205,7 +211,7 @@ stateformula:
 					free($1); 
 					free($2);
 				}
-//	| '(' stateformula ')'  	{ $$ = $2; }
+	| '(' stateformula ')'  	{ $$ = $2; }
 	;
 
 %%

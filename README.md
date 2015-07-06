@@ -1,6 +1,6 @@
 ##paramsynth trace verifier
 
-Currently only evaluates state boolean formulas.
+Verifies a given input using linear temporal logic formulas.
 
 Compile by running make (requires bison and flex)
 
@@ -10,16 +10,12 @@ Compile by running make (requires bison and flex)
 
 will read from stdin if no file given
 
-####Syntax
+####Syntax 
 
-Variable declaration:
-
-```
-A = true;    #1
-B = false;   #0
-C = 20;
-#etc.... 
-```
+Begin the input file with your desired formulas, using the following operators.    
+Separate formulas and data with the keyword `DATA`.    
+Beneath `DATA`, list your parameters in the order that they will appear in the input data.
+Then, list your input data. 
 
 State operators:
 
@@ -27,7 +23,6 @@ State operators:
 `&&`	: AND    
 `||`    : OR     
 `->`    : IMPLIES       
-`<->`   : EQUIV      
 
 Unary LTL operators:
 
@@ -35,8 +30,36 @@ Unary LTL operators:
 `G`     : **G**lobally    
 `F`     : **F**uture    
 
-
 Binary LTL operators:
 
 `U`     : **U**ntil     
-`R`     : **R**elease     
+
+Numerical comparison operators:
+
+`<`, `>`, `<=`, `>=`, `==`      
+Use `!(p0 == p1)` to check for inequality.
+
+Other:
+
+Use `(` and `)`.
+
+Example input file
+
+```
+(G !A) && (G B) && (F C)
+
+DATA
+A B C
+
+0 2 0
+0 3 0
+0 4 0
+0 5 0
+0 2 1 
+0 2 1
+```
+
+Output : true
+
+
+

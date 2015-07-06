@@ -1,11 +1,5 @@
-A = 20.01;
-B = 1;
-C = 0;
-
-G !A
-(A && !C) && (A > 10 || B > 2) 
-(B) ||!C && A && B -> B && !C
-(C < 3) && ( A < 20)
+G(A && B && F(C>0) && ( A > 10));
+G((C < 3) && ( A < 18) );
 
 #end parsing, begin data 
 DATA
