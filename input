@@ -4,7 +4,7 @@ C = 0;
 
 (A && !C) && (A || B) && F(B && !C)
 (B < 3) ||!C && A && B -> B && !C
-(C < 3) && ( A < 20)
+#comparisons not implemented yet (C < 3) && ( A < 20)
 
 #end parsing, begin data 
 DATA

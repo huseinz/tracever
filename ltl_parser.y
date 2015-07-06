@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
+#include "automata.h"
 
 #define SYMBOL_TABLE_SIZE 50
 
@@ -17,6 +18,8 @@ int sym_index = 1;
 
 void yyerror(const char* s);
 int sym_lookup(const char* str);
+
+Automata* final_automata;
 %}
 
 
@@ -25,13 +28,14 @@ int sym_lookup(const char* str);
 	long  tval;
 	double fval;
 	char* sval;
+	struct Automata* node;
 }
 
 %destructor { free ($$); } <sval>
 
-%type  <tval>	stateformula;
-%type  <tval>   automata;
-%type  <tval>   ltlformula;
+%type  <node>	stateformula;
+%type  <node>   automata;
+%type  <node>   ltlformula;
 
 %token <tval>	INTEGER
 %token <fval>   REAL
@@ -54,47 +58,86 @@ ltl_parser:
 	;
 
 statement:
-	automata	 			{ 
-						printf("'automata' returns %ld \"%s\"\n\n",
-							$1,
-							$1 == 0 ? "false" : "true"); 
-					}
+	automata	 	{ 
+				/*	printf("'automata' returns %ld \"%s\"\n\n",
+						$1,
+						$1 == 0 ? "false" : "true"); */
+					final_automata = $1;
+					puts("Created final automata");
+					puts("\n");
+					print_automata(final_automata);
+					puts("\n");
+				}
 
-	| IDENTIFIER '=' REAL ';'	{ 
-						printf("set %s to %.2lf \n", $1, $3); 
+	| IDENTIFIER '=' REAL ';'{ 
+					printf("set %s to %.2lf \n", $1, $3); 
 
-						//update or add IDENTIFIER to symbol table 
-						if( sym_lookup($1) == 0 ) {
-							sym[ sym_index ].sval = $1;
-							sym[ sym_index ].tval = $3;
-							sym_index++;
-						} else {	
-							sym[ sym_lookup($1) ].tval = $3; 
-						}
+					//update or add IDENTIFIER to symbol table 
+					if( sym_lookup($1) == 0 ) {
+						sym[ sym_index ].sval = $1;
+						sym[ sym_index ].tval = $3;
+						sym_index++;
+					} else {	
+						sym[ sym_lookup($1) ].tval = $3; 
 					}
+				}
 	//accept token //pass off automata
-	| DATA				{ 	
-						int i;
-						for(i = 1; i < sym_index; i++)
-							free(sym[i].sval);
-						YYACCEPT; 
-					} 
-	| ';'				{ ; }
+	| DATA			{ 	
+					int i;
+					for(i = 1; i < sym_index; i++)
+						free(sym[i].sval);
+					YYACCEPT; 
+				} 
+	| ';'			{ ; }
 	;
 
 automata:
-	ltlformula             {$$ = $1;}
-	| automata AND automata { $$ = $1 && $3; }
-	| automata OR automata { $$ = $1 || $3;}
+	ltlformula             	{	$$ = $1;
+				}
+	| automata AND automata { /*$$ = $1 && $3;*/
+					Automata* AND_node = create_node(AND_N, 0, $1, $3);
+					$$ = AND_node;
+					puts("Created AND Automata node");
+				}
+	| automata OR automata 	{ /*$$ = $1 || $3;*/
+					Automata* OR_node = create_node(OR_N, 0, $1, $3);
+					$$ = OR_node;
+					puts("Created OR Automata node");
+				}
+
 	;
 
 ltlformula:
-	stateformula        { $$ = $1;}
-	| NEXT ltlformula { $$ = $2;}
-	| GLOBAL ltlformula { $$ = $2;}
-	| FUTURE ltlformula { $$ = $2;}
-	| ltlformula UNTIL ltlformula { $$ = $3;}
-	| '(' ltlformula ')' {$$ = $2;}
+	stateformula        	{ 	$$ = $1;
+				}
+	| NEXT ltlformula 	{ 	$$ = $2;
+				}
+	| GLOBAL ltlformula 	{ /*$$ = $2;*/
+					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
+					Automata* GLOBAL_node = create_node(GLOBAL_N, 0, TRUE_node, $2);
+					TRUE_node->left = GLOBAL_node;
+					$$ = GLOBAL_node;
+					puts("Created GLOBAL node");
+				}
+	| FUTURE ltlformula 	{ /*$$ = $2;*/
+					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
+					Automata* FUTURE_node = create_node(FUTURE_N, 0, TRUE_node, $2);
+					TRUE_node->left = FUTURE_node;
+					$$ = FUTURE_node;
+					puts("Created FUTURE node");
+				}
+	| ltlformula UNTIL ltlformula { /*$$ = $3;*/
+					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
+					Automata* UNTILB_node = create_node(UNTILB_N, 0, TRUE_node, $1);
+					Automata* UNTIL_node  = create_node(UNTILA_N, 0, $3, UNTILB_node);
+					TRUE_node->left = UNTIL_node;
+					$$ = UNTIL_node;
+					puts("Created UNTIL node");
+				}
+	| '(' ltlformula ')' 	{	$$ = $2;
+				}
+	| '(' stateformula ')'  {	$$ = $2;
+				}
 	;
 
 stateformula:
@@ -105,29 +148,38 @@ stateformula:
 						"Parse error: variable '%s' not defined.\n", $1);
 						YYERROR;
 					} else { 
-						$$ = sym[sym_lookup($1)].tval;
+						Automata* IDENT_node = 
+						create_node(IDENT_N, sym_lookup($1), NULL, NULL);
+						$$ = IDENT_node;
+						puts("Created IDENTIFIER node");
 					}
 					free($1);
 				}
-	| NOT stateformula 		{
-					$$ = !$2; 
-					printf("!%ld returns %ld\n", $2, $$);
+	| NOT stateformula 	{
+					$$ = $2; 
+//					printf("!%ld returns %ld\n", $2, $$);
 				}
 	| stateformula OR stateformula 		{
-					$$ = $1 || $3; 
-					printf("%ld || %ld returns %ld\n", $1, $3, $$);
+//					$$ = $1 || $3; 
+//					printf("%ld || %ld returns %ld\n", $1, $3, $$);
+					Automata* OR_node = create_node(OR_N, 0, $1, $3);
+					$$ = OR_node;
+					puts("Created OR stateformula node");
 				}
 	| stateformula AND stateformula 	{
-					$$ = $1 && $3; 
-					printf("%ld && %ld returns %ld\n", $1, $3, $$);
+//					$$ = $1 && $3; 
+//					printf("%ld && %ld returns %ld\n", $1, $3, $$);
+					Automata* AND_node = create_node(AND_N, 0, $1, $3);
+					$$ = AND_node;
+					puts("Created AND stateformula node");
 				}
 	| stateformula IMPLIES stateformula 	{
-					$$ = !$1 || $3;
-					printf("%ld -> %ld returns %ld\n", $1, $3, $$);
+//					$$ = !$1 || $3;
+//					printf("%ld -> %ld returns %ld\n", $1, $3, $$);
 				}
 	| IDENTIFIER COMPARATOR REAL	{
 
-					double ident_val;
+/*					double ident_val;
 					//check if identifier is not declared
 					if(sym_lookup($1) == 0){
 						fprintf(stderr, 
@@ -147,7 +199,7 @@ stateformula:
 						$$ = ident_val >= $3;
 					if( (strcmp($2, "<->") == 0) || (strcmp($2, "==") == 0))
 						$$ = ident_val == $3;
-					printf("%s %s %.2lf returns %ld\n", $1, $2, $3, $$);
+					printf("%s %s %.2lf returns %ld\n", $1, $2, $3, $$);*/
 
 					free($1); 
 					free($2);
