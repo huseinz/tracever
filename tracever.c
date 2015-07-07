@@ -97,11 +97,14 @@ int main(int argc, char* argv[]) {
 	puts("\nBegin DFS");
 #endif
 	//finally
-	printf("%s\n", DFS(final_automata, 0) ? "true" : "false");
+	bool DFS_retval = DFS(final_automata, 0); 
 
 #ifdef VERBOSE
 	printf("DFS calls made: %ld\n", DFS_calls_made);
+	printf("Automata returns ");
 #endif
+	puts( DFS_retval ? "true" : "false" );
+
 	delete_automata(final_automata);
 
 	fclose(data_file);

@@ -48,7 +48,7 @@ void print_automata(Automata* a){
 
 bool DFS(Automata* a, int n){
 
-#ifdef VERBOSE
+#ifdef YYDEBUG
 	printf("n = %d ", n);
 	switch(a->nodetype){
 		case AND_N: puts("AND"); break;
@@ -59,6 +59,8 @@ bool DFS(Automata* a, int n){
 		case COMPARATOR_N: puts("COMPARE"); break;
 		default: puts("!UNKNOWN!"); break;
 	}
+#endif
+#ifdef VERBOSE
 	DFS_calls_made++;
 #endif
 
