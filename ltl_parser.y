@@ -51,9 +51,9 @@ void print_status(const char* str);
 ltl_parser:
 	automata 	 	{ 
 					final_automata = $1;
-					puts("Created final Automata\n");
+					puts("Created final Automata");
 				#ifdef VERBOSE
-					puts("Printing Automata");
+					puts("\nPrinting Automata");
 					print_automata(final_automata);
 					puts("");
 				#endif
