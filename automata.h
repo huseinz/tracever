@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-double sym_vals[100][10];
+double sym_vals[200][10];
 
 int n_max;
 

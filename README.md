@@ -12,6 +12,8 @@ The formula file should contain a single with your desired formula, using operat
 The data file should begin with the list of parameter names in the order than they appear in each line of data.
 Below this, begin listing your input data. 
 
+INPUT DATA MUST BE FLOATING POINT!
+
 State operators:
 
 `!`	: NOT    

@@ -1,5 +1,7 @@
 /*
 	Parameter Synthesis Trace Verifier
+
+	the code in this file is atrocious
 */
 
 #include "automata.h"
@@ -12,8 +14,6 @@ extern int yydebug;
 extern int sym_lookup(const char* str);
 extern int sym_index;
 
-/* warning */
-/* the code in this file is terrible */
 int main(int argc, char* argv[]) {
 
 #ifdef YYDEBUG
