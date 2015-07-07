@@ -26,6 +26,7 @@ typedef enum{
 	GTR_OR_EQ,
 	LESS_OR_EQ,
 	EQUAL,
+	NOT_EQUAL
 }comparator_t;
 
 typedef struct Automata{
