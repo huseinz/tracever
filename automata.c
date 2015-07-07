@@ -32,8 +32,6 @@ void print_automata(Automata* a){
 		puts("TRUE node");
 		return;
 	}
-	print_automata(a->left);
-	print_automata(a->right);
 	if(a)
 	switch(a->nodetype){
 		case AND_N: puts("AND node"); break;
@@ -44,6 +42,8 @@ void print_automata(Automata* a){
 		case COMPARATOR_N: puts("COMPARE node"); break;
 		default: puts("!UNKNOWN!"); break;
 	}
+	print_automata(a->left);
+	print_automata(a->right);
 }
 
 bool DFS(Automata* a, int n){
