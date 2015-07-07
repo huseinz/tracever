@@ -4,7 +4,7 @@
 	the code in this file is atrocious
 */
 
-#include "automata.h"
+#include "automaton.h"
 #include "lex.yy.h"
 
 #define BUFFER_SIZE 1000
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
 	puts("\nBegin DFS");
 #endif
 	//finally
-	bool DFS_retval = DFS(final_automata, 0); 
+	bool DFS_retval = DFS(final_automaton, 0); 
 
 #ifdef VERBOSE
 	printf("DFS calls made: %ld\n\n", DFS_calls_made);
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 #endif
 	puts( DFS_retval ? "true" : "false" );
 
-	delete_automata(final_automata);
+	delete_automaton(final_automaton);
 
 	fclose(data_file);
 

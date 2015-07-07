@@ -1,6 +1,6 @@
 //automata node definition
-#ifndef AUTOMATA_H
-#define AUTOMATA_H 
+#ifndef AUTOMATON_H
+#define AUTOMATON_H 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +33,7 @@ typedef enum{
 	NOT_EQUAL
 }comparator_t;
 
-typedef struct Automata{
+typedef struct Automaton{
 	
 	//the node's type
 	nodetype_t nodetype;
@@ -47,21 +47,21 @@ typedef struct Automata{
 	//value to compare against, used in COMPARATOR_N nodes
 	double     comparison_val;
 	//left child, this is the 'default'
-	struct Automata* left;
+	struct Automaton* left;
 	//right child
-	struct Automata* right;
+	struct Automaton* right;
 
-}Automata;
+}Automaton;
 
 /* bad place to put this*/
-Automata* final_automata;
+Automaton* final_automaton;
 
-Automata* create_node(nodetype_t nodetype, int var, Automata* left, Automata* right);
+Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton* right);
 
-void delete_automata(Automata* a);
+void delete_automaton(Automaton* a);
 
-void print_automata(Automata* a);
+void print_automaton(Automaton* a);
 
-bool DFS(Automata* a, int n);
+bool DFS(Automaton* a, int n);
 
 #endif

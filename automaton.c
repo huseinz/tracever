@@ -1,8 +1,8 @@
-//automata node definition
-#include "automata.h"
+//automaton node definition
+#include "automaton.h"
 
-Automata* create_node(nodetype_t nodetype, int var, Automata* left, Automata* right){
-	Automata* newnode = malloc(sizeof(Automata));
+Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton* right){
+	Automaton* newnode = malloc(sizeof(Automaton));
 	
 	if( !newnode )
 		//throw some fatal error
@@ -16,16 +16,16 @@ Automata* create_node(nodetype_t nodetype, int var, Automata* left, Automata* ri
 	return newnode;
 }
 
-void delete_automata(Automata* a){
+void delete_automaton(Automaton* a){
 	if( !a || a->nodetype == TRUE_N)
 		return;
-	delete_automata(a->left);
-	delete_automata(a->right);
+	delete_automaton(a->left);
+	delete_automaton(a->right);
 
 	free(a);
 }
 
-void print_automata(Automata* a){
+void print_automaton(Automaton* a){
 	if( a == NULL )
 		return;
 	if( a->nodetype == TRUE_N){
@@ -42,11 +42,11 @@ void print_automata(Automata* a){
 		case COMPARATOR_N: puts("COMPARE node"); break;
 		default: puts("!UNKNOWN!"); break;
 	}
-	print_automata(a->left);
-	print_automata(a->right);
+	print_automaton(a->left);
+	print_automaton(a->right);
 }
 
-bool DFS(Automata* a, int n){
+bool DFS(Automaton* a, int n){
 
 #ifdef YYDEBUG
 	printf("n = %d ", n);
