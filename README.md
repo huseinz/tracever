@@ -37,13 +37,13 @@ Numerical comparison operators:
 
 Use `(` and `)` to make statements unambiguous.
 
-Example input file
+Example formula file
 
 ```
 (G !A) && (G B) && (F C);
 ```
 
-Example input file
+Example data file
 ```
 A B C 
 20.2 	10.1 	0.0 
@@ -60,7 +60,7 @@ A B C
 
 Requires flex, bison > 3.0, gcc
 
-Just run `make`.
+Just run `make`
 
 Addition targets:
 ```

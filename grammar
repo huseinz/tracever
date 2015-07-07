@@ -10,15 +10,8 @@ Automata ::=
 
 //LTL parser grammar 
 
-ltlparser:
-	ltlparser statement
-	| %empty
-	;
-
-statement:
+ltl_parser:
 	automata
-	| DATA (YYACCEPT)
-	| ';'
 	;
 
 automata:
@@ -28,22 +21,16 @@ automata:
 	;
 
 ltlformula:
-	stateformula
-	| NEXT   ltlformula
+	IDENTIFIER
 	| GLOBAL ltlformula
 	| FUTURE ltlformula
 	| ltlformula UNTIL ltlformula
-	| '(' stateformula ')'
-	;
-
-stateformula:
-	IDENTIFIER
 	| NOT stateformula
 	| stateformula AND stateformula
 	| stateformula OR stateformula
 	| stateformula IMPLIES stateformula
 	| IDENTIFIER COMPARATOR REAL
-	| '(' stateformula ')'
+	| '(' ltlformula ')'
 	;
 
 

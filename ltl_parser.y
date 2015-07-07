@@ -43,13 +43,13 @@ void print_status(const char* str);
 
 %% 
 
-ltl_parser:
+/*ltl_parser:
 	ltl_parser statement  			
 	| %empty  
-	;
+	;*/
 
-statement:
-	automata ';'	 	{ 
+ltl_parser:
+	automata 	 	{ 
 					final_automata = $1;
 					puts("Created final Automata\n");
 				#ifdef VERBOSE

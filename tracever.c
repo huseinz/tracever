@@ -102,6 +102,8 @@ int main(int argc, char* argv[]) {
 	//finally
 	printf("Automata returns %s\n", DFS(final_automata, 0) ? "true" : "false");
 	
+	delete_automata(final_automata);
+
 	fclose(formula_file);
 	fclose(data_file);
 
