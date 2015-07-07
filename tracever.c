@@ -33,26 +33,23 @@ int main(int argc, char* argv[]) {
 	}
 
 	//read first line of formula_file
-	char ltlbuffer[BUFFER_SIZE];
-	ltlbuffer[BUFFER_SIZE-1] = '\0';
-	ltlbuffer[BUFFER_SIZE-2] = '\0';
-	char* ptr = fgets(ltlbuffer, BUFFER_SIZE, data_file);
+	char linebuffer[BUFFER_SIZE];
+	char* ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
 
 	/* run parser */
 #ifdef VERBOSE
-	printf("LTL Formula: %s\n", ltlbuffer);
+	printf("LTL Formula: %s\n", linebuffer);
 	puts("Begin parsing and automaton generation");
 #endif
-	yy_scan_string(ltlbuffer);
+	yy_scan_string(linebuffer);
 	yyparse();
 	yypop_buffer_state();
 
-	/* warning */
-	/* no error checking from this point on */
-
+	
+	//begin reading in input data
 	int sym_table_indices[MAX_PARAMS]; //where each var is in sym table
 	int i = 0, j;
-	char linebuffer[BUFFER_SIZE];
+
 	ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
 
 	//find index in sym table where each var is defined
@@ -79,7 +76,7 @@ int main(int argc, char* argv[]) {
 			if(fscanf_retval != 1)
 				break;
 #ifdef VERBOSE
-			printf("%20.10lf", sym_vals[i][sym_table_indices[j]]);
+			printf("%12lG", sym_vals[i][sym_table_indices[j]]);
 #endif
 		}
 		if(fscanf_retval != 1)
@@ -89,7 +86,7 @@ int main(int argc, char* argv[]) {
 #endif
 	}
 	
-	//important, set nmax to number of input traces + 1
+	//important, set nmax to number of input traces 
 	n_max = i ;
 
 #ifdef VERBOSE
