@@ -24,11 +24,11 @@ ltlformula:
 	IDENTIFIER
 	| GLOBAL ltlformula
 	| FUTURE ltlformula
-	| ltlformula UNTIL ltlformula
 	| NOT stateformula
-	| stateformula AND stateformula
-	| stateformula OR stateformula
-	| stateformula IMPLIES stateformula
+	| ltlformula UNTIL ltlformula
+	| ltlformula AND ltlformula
+	| ltlformula OR ltlformula
+	| ltlformula IMPLIES ltlformula
 	| IDENTIFIER COMPARATOR REAL
 	| '(' ltlformula ')'
 	;
