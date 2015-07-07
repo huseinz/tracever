@@ -10,10 +10,8 @@ Verifies a given input using linear temporal logic formulas.
 
 The formula file should contain your desired formula, using operators defined below.       
 The program will only read the first line.      
-The data file should begin with the list of parameter names in the order than they appear in each line of data.
+The data file should begin with the list of parameter names in the order than they appear in each line of input data.     
 Below this, begin listing your input data. 
-
-INPUT DATA MUST BE FLOATING POINT!
 
 State operators:
 
