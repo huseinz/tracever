@@ -8,10 +8,9 @@ Verifies a given input using linear temporal logic formulas.
 
 ####Syntax 
 
-Begin the input file with your desired formula, using the following operators.    
-End it with a semicolon.    
-List your parameters in the order that they will appear in the input data.
-Then, list your input data. 
+The formula file should contain a single with your desired formula, using operators defined below.       
+The data file should begin with the list of parameter names in the order than they appear in each line of data.
+Below this, begin listing your input data. 
 
 State operators:
 
@@ -40,7 +39,7 @@ Use `(` and `)` to make statements unambiguous.
 Example formula file
 
 ```
-(G !A) && (G B) && (F C);
+G( (B > 3) && (A > 4) && F(C > 0) )
 ```
 
 Example data file
