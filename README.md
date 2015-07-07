@@ -21,7 +21,6 @@ State operators:
 
 Unary LTL operators:
 
-`X`     : **N**ext  (not implemented, probably doesn't need to be) 
 `G`     : **G**lobally    
 `F`     : **F**uture    
 
