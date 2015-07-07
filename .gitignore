@@ -1,0 +1,7 @@
+*~
+lex.yy.c
+lex.yy.h
+ltl_parser.dot
+ltl_parser.tab.c
+ltl_parser.tab.h
+tracever

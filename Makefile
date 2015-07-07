@@ -18,4 +18,6 @@ graph:
 	bison --language=c -d -g ltl_parser.y
 	dot -Tps ltl_parser.dot -o graph.pdf
 clean:
-	rm -f *.o *.dot lex.yy.* ltl_parser.tab.* *.pdf ltl_parser.output
+	rm -f *.o *.dot lex.yy.* ltl_parser.tab.* *.pdf ltl_parser.output tracever *~
+
+
