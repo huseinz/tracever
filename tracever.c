@@ -95,7 +95,6 @@ int main(int argc, char* argv[]) {
 #ifdef VERBOSE
 	printf("n_max is %d\n", n_max);
 	puts("\nBegin DFS");
-	printf("Automata returns ");
 #endif
 	//finally
 	printf("%s\n", DFS(final_automata, 0) ? "true" : "false");
