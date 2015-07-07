@@ -39,7 +39,10 @@ int main(int argc, char* argv[]) {
 	char* ptr = fgets(ltlbuffer, BUFFER_SIZE, data_file);
 
 	/* run parser */
+#ifdef VERBOSE
 	printf("LTL Formula: %s\n", ltlbuffer);
+	puts("Begin parsing and Automata generation");
+#endif
 	yy_scan_string(ltlbuffer);
 	yyparse();
 	yypop_buffer_state();
@@ -92,9 +95,10 @@ int main(int argc, char* argv[]) {
 #ifdef VERBOSE
 	printf("n_max is %d\n", n_max);
 	puts("\nBegin DFS");
+	printf("Automata returns ");
 #endif
 	//finally
-	printf("Automata returns %s\n", DFS(final_automata, 0) ? "true" : "false");
+	printf("%s\n", DFS(final_automata, 0) ? "true" : "false");
 
 #ifdef VERBOSE
 	printf("DFS calls made: %ld\n", DFS_calls_made);
