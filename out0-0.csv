@@ -1,4 +1,4 @@
-G( F LPS && Phagocyte > -1 && (Phagocyte U AntiInflam) && F Act-Phag && Damage > -1 && F Proinflam)
+G( F LPS && Phagocyte > -1 && (Phagocyte U AntiInflam) && F Act-Phag && Damage > -1 && F Proinflam && LPS -> Phagocyte)
 LPS Phagocyte Act-Phag AntiInflam Damage Proinflam
 0.0 73.0 0.0 0.0 0.0 0.0
 0.0 73.0 0.0 0.0 0.0 0.0

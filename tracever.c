@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 	/* run parser */
 #ifdef VERBOSE
 	printf("LTL Formula: %s\n", ltlbuffer);
-	puts("Begin parsing and Automata generation");
+	puts("Begin parsing and automaton generation");
 #endif
 	yy_scan_string(ltlbuffer);
 	yyparse();
@@ -100,8 +100,8 @@ int main(int argc, char* argv[]) {
 	bool DFS_retval = DFS(final_automata, 0); 
 
 #ifdef VERBOSE
-	printf("DFS calls made: %ld\n", DFS_calls_made);
-	printf("Automata returns ");
+	printf("DFS calls made: %ld\n\n", DFS_calls_made);
+	printf("Automaton returns ");
 #endif
 	puts( DFS_retval ? "true" : "false" );
 

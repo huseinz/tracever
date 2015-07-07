@@ -52,8 +52,8 @@ ltl_parser:
 	automata 	 	{ 
 					final_automata = $1;
 				#ifdef VERBOSE
-					puts("Created final Automata\n");
-					puts("Printing Automata");
+					puts("Created final automaton\n");
+					puts("Printing automaton");
 					print_automata(final_automata);
 					puts("");
 				#endif
@@ -67,12 +67,12 @@ automata:
 	| automata AND automata { /*$$ = $1 && $3;*/
 					Automata* AND_node = create_node(AND_N, 0, $1, $3);
 					$$ = AND_node;
-					print_status("Created AND Automata node");
+					print_status("Created AND automata node");
 				}
 	| automata OR automata 	{ /*$$ = $1 || $3;*/
 					Automata* OR_node = create_node(OR_N, 0, $1, $3);
 					$$ = OR_node;
-					print_status("Created OR Automata node");
+					print_status("Created OR automata node");
 				}
 	;
 
