@@ -7,11 +7,13 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_INPUT_SIZE 200
+#define MAX_INPUT_SIZE 1000
+#define MAX_PARAMS     20	
 
-double sym_vals[MAX_INPUT_SIZE][10];
+double sym_vals[MAX_INPUT_SIZE][MAX_PARAMS];
 
 int n_max;
+long DFS_calls_made;
 
 typedef enum {
 	AND_N,

@@ -59,6 +59,7 @@ bool DFS(Automata* a, int n){
 		case COMPARATOR_N: puts("COMPARE"); break;
 		default: puts("!UNKNOWN!"); break;
 	}
+	DFS_calls_made++;
 #endif
 
 	if(a == NULL)

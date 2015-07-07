@@ -24,7 +24,7 @@ ltlformula:
 	IDENTIFIER
 	| GLOBAL ltlformula
 	| FUTURE ltlformula
-	| NOT stateformula
+	| NOT ltlformula
 	| ltlformula UNTIL ltlformula
 	| ltlformula AND ltlformula
 	| ltlformula OR ltlformula

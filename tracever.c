@@ -21,14 +21,13 @@ int main(int argc, char* argv[]) {
 #endif
 //	yyin = argc > 1 ? fopen(argv[1], "r") : stdin;
 
-	if(argc < 3){
+	if(argc < 2){
 		fprintf(stderr, "Error: Not enough arguments\n");
-		fprintf(stderr, "Format is: %s formula_file data_file\n", argv[0]);
+		fprintf(stderr, "Format is: %s input_file\n", argv[0]);
 		return 1;
 	}
-	FILE* formula_file = fopen(argv[1], "r");
-	FILE* data_file   = fopen(argv[2], "r");
-	if( !formula_file || !data_file ){
+	FILE* data_file = fopen(argv[1], "r");
+	if( !data_file ){
 		fprintf(stderr, "Error opening input files\n");
 		return 1;
 	}
@@ -37,7 +36,7 @@ int main(int argc, char* argv[]) {
 	char ltlbuffer[BUFFER_SIZE];
 	ltlbuffer[BUFFER_SIZE-1] = '\0';
 	ltlbuffer[BUFFER_SIZE-2] = '\0';
-	char* ptr = fgets(ltlbuffer, BUFFER_SIZE, formula_file);
+	char* ptr = fgets(ltlbuffer, BUFFER_SIZE, data_file);
 
 	/* run parser */
 	printf("LTL Formula: %s\n", ltlbuffer);
@@ -48,7 +47,7 @@ int main(int argc, char* argv[]) {
 	/* warning */
 	/* no error checking from this point on */
 
-	int sym_table_indices[BUFFER_SIZE]; //where each var is in sym table
+	int sym_table_indices[MAX_PARAMS]; //where each var is in sym table
 	int i = 0, j;
 	char linebuffer[BUFFER_SIZE];
 	ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
@@ -60,21 +59,24 @@ int main(int argc, char* argv[]) {
 	puts("\nBegin reading input");
 	printf("Found %s at position %d in symbol table\n", ptr, sym_table_indices[i]);
 #endif
-	for(i = 1; i < sym_index - 1; i++){
+	for(i = 1; i < MAX_PARAMS; i++){
 		ptr = strtok(NULL, " ,\t\n");
+		if(!ptr)
+			break;
 		sym_table_indices[i] = sym_lookup(ptr);
 #ifdef VERBOSE
 		printf("Found %s at position %d in symbol table\n", ptr, sym_table_indices[i]);
 #endif
 	}
+	int read_params = i;
 	for(i = 0; i < MAX_INPUT_SIZE && !feof(data_file) && !ferror(data_file); i++){
 		int fscanf_retval = 0;
-		for(j = 0; j < sym_index - 1 ; j++){
-			fscanf_retval = fscanf(data_file, "%lf", &sym_vals[i][sym_table_indices[j]]);
+		for(j = 0; j < read_params ; j++){
+			fscanf_retval = fscanf(data_file, "%lG", &sym_vals[i][sym_table_indices[j]]);
 			if(fscanf_retval != 1)
 				break;
 #ifdef VERBOSE
-			printf("%12.3lf", sym_vals[i][sym_table_indices[j]]);
+			printf("%20.10lf", sym_vals[i][sym_table_indices[j]]);
 #endif
 		}
 		if(fscanf_retval != 1)
@@ -92,11 +94,13 @@ int main(int argc, char* argv[]) {
 	puts("\nBegin DFS");
 #endif
 	//finally
-	printf("\nAutomata returns %s\n", DFS(final_automata, 0) ? "true" : "false");
-	
+	printf("Automata returns %s\n", DFS(final_automata, 0) ? "true" : "false");
+
+#ifdef VERBOSE
+	printf("DFS calls made: %ld\n", DFS_calls_made);
+#endif
 	delete_automata(final_automata);
 
-	fclose(formula_file);
 	fclose(data_file);
 
 	return 0;

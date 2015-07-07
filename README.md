@@ -4,14 +4,14 @@ Verifies a given input using linear temporal logic formulas.
 
 ####Synopsis
 
-`./tracever formula_file data_file`
+`./tracever data_file`
 
 ####Syntax 
 
-The formula file should contain your desired formula, using operators defined below.       
-The program will only read the first line.      
-The data file should begin with the list of parameter names in the order than they appear in each line of input data.     
-Below this, begin listing your input data. 
+The data file should begin with the LTL formula you want to check your input data against.   
+Below this, give a list of parameter names in the order they appear in each line of input data.     
+Below this, begin listing your input data. Input data is currently limited to 1000 lines and the number of parameters is limited to 20.   
+This can be changed by editing the defines in automata.h
 
 State operators:
 
@@ -36,14 +36,9 @@ Numerical comparison operators:
 
 Use `(` and `)` to make statements unambiguous.
 
-Example formula file
-
-```
-G( (B > 3) && (A > 4) && (B U C) && F C)
-```
-
 Example data file
 ```
+G( (B > 3) && (A > 4) && (B U C) && F C)
 A B C 
 20.2 	10.1 	0.0 
 21.1 	1000.2 	0.0 
