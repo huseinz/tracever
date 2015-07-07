@@ -17,9 +17,10 @@ Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton*
 }
 
 void delete_automaton(Automaton* a){
-	if( !a || a->nodetype == TRUE_N)
+	if( !a )
 		return;
-	delete_automaton(a->left);
+	if( a->nodetype != TRUE_N)
+		delete_automaton(a->left);
 	delete_automaton(a->right);
 
 	free(a);

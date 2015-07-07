@@ -13,6 +13,7 @@ extern int yyparse();
 extern int yydebug;
 extern int sym_lookup(const char* str);
 extern int sym_index;
+extern char* sym[];
 
 int main(int argc, char* argv[]) {
 
@@ -102,7 +103,11 @@ int main(int argc, char* argv[]) {
 #endif
 	puts( DFS_retval ? "true" : "false" );
 
+	//clean up
 	delete_automaton(final_automaton);
+	
+	for(i = 1; i < sym_index; i++)
+		free(sym[i]);
 
 	fclose(data_file);
 
