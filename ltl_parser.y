@@ -112,8 +112,8 @@ ltlformula:
 				}
 	| ltlformula UNTIL ltlformula { /*$$ = $3;*/
 					Automata* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
-					Automata* UNTILB_node = create_node(AND_N, 0, TRUE_node, $1);
-					Automata* UNTIL_node  = create_node(OR, 0, $3, UNTILB_node);
+					Automata* UNTILB_node = create_node(AND_N, 0, $1, TRUE_node);
+					Automata* UNTIL_node  = create_node(OR_N, 0, $3, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
 					UNTIL_node->accepting = 1;
 					$$ = UNTIL_node;

@@ -38,7 +38,7 @@ Use `(` and `)` to make statements unambiguous.
 Example formula file
 
 ```
-G( (B > 3) && (A > 4) && F(C > 0) )
+G( (B > 3) && (A > 4) && (B U C) )
 ```
 
 Example data file

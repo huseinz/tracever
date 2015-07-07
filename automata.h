@@ -21,7 +21,7 @@ typedef enum {
 }nodetype_t;
 
 typedef enum{
-	GTR_THAN,
+	GTR_THAN = COMPARATOR_N + 1,
 	LESS_THAN,
 	GTR_OR_EQ,
 	LESS_OR_EQ,

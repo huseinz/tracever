@@ -42,24 +42,34 @@ void print_automata(Automata* a){
 		case IDENT_N: puts("IDENT node"); break;
 		case NOT_N: puts("NOT node");	break;
 		case COMPARATOR_N: puts("COMPARE node"); break;
+		default: puts("!UNKNOWN!"); break;
 	}
 }
 
 bool DFS(Automata* a, int n){
 
 #ifdef VERBOSE
-	printf("n = %d\n", n);
+	printf("n = %d ", n);
+	switch(a->nodetype){
+		case AND_N: puts("AND"); break;
+		case OR_N: puts("OR"); break;
+		case TRUE_N: puts("TRUE"); break;
+		case IDENT_N: puts("IDENT"); break;
+		case NOT_N: puts("NOT");	break;
+		case COMPARATOR_N: puts("COMPARE"); break;
+		default: puts("!UNKNOWN!"); break;
+	}
 #endif
 
 	if(a == NULL)
-		return true;
+		return true; //questionable
 	if(a->nodetype == AND_N)
 		return DFS(a->left, n) && DFS(a->right, n);
 	else if(a->nodetype == OR_N)
 		return DFS(a->left, n) || DFS(a->right, n);
 	else{
 		if(n != n_max){
-			if( a->nodetype == TRUE_N && n + 1 == n_max)
+			if( n + 1 == n_max)
 				return a->accepting;
 
 			switch(a->nodetype){
@@ -94,3 +104,4 @@ bool DFS(Automata* a, int n){
 	}
 	return false;
 }
+
