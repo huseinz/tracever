@@ -7,7 +7,9 @@
 #include <string.h>
 #include <stdbool.h>
 
-double sym_vals[200][10];
+#define MAX_INPUT_SIZE 200
+
+double sym_vals[MAX_INPUT_SIZE][10];
 
 int n_max;
 

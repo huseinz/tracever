@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 
 	//find index in sym table where each var is defined
 	ptr = strtok(linebuffer, " ,\t\n");
-	sym_table_indices[i] = sym_lookup(ptr);
+	sym_table_indices[0] = sym_lookup(ptr);
 #ifdef VERBOSE
 	puts("\nBegin reading input");
 	printf("Found %s at position %d in symbol table\n", ptr, sym_table_indices[i]);
@@ -67,34 +67,25 @@ int main(int argc, char* argv[]) {
 		printf("Found %s at position %d in symbol table\n", ptr, sym_table_indices[i]);
 #endif
 	}
-	for(i = 0; fgets(linebuffer, BUFFER_SIZE, data_file) != NULL; i++){
-		ptr = strtok(linebuffer, " ,\t\n");
-
-		if(!ptr) 
-			break;
-
-		sym_vals[i][sym_table_indices[0]] = strtod(ptr, NULL);
-
-#ifdef VERBOSE
-		printf("%12.3lf", sym_vals[i][sym_table_indices[0]]);
-#endif
-		for(j = 1; j < sym_index -1; j++){
-			ptr = strtok(NULL, " ,\t\n");
-			if(!ptr) 
+	for(i = 0; i < MAX_INPUT_SIZE && !feof(data_file) && !ferror(data_file); i++){
+		int fscanf_retval = 0;
+		for(j = 0; j < sym_index - 1 ; j++){
+			fscanf_retval = fscanf(data_file, "%lf", &sym_vals[i][sym_table_indices[j]]);
+			if(fscanf_retval != 1)
 				break;
-			sym_vals[i][sym_table_indices[j]] = strtod(ptr, NULL);
 #ifdef VERBOSE
 			printf("%12.3lf", sym_vals[i][sym_table_indices[j]]);
 #endif
-
 		}
+		if(fscanf_retval != 1)
+			break;
 #ifdef VERBOSE
 		puts("");
 #endif
 	}
 	
 	//important, set nmax to number of input traces + 1
-	n_max = i;
+	n_max = i ;
 
 #ifdef VERBOSE
 	printf("n_max is %d\n", n_max);
