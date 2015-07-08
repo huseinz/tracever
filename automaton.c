@@ -1,4 +1,3 @@
-//automaton node definition
 #include "automaton.h"
 
 Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton* right){
@@ -66,7 +65,7 @@ bool DFS(Automaton* a, int n){
 #endif
 
 	if(a == NULL)
-		return true; //questionable
+		return false; //questionable
 	if(a->nodetype == AND_N)
 		return DFS(a->left, n) && DFS(a->right, n);
 	else if(a->nodetype == OR_N)

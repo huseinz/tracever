@@ -56,12 +56,43 @@ typedef struct Automaton{
 /* bad place to put this*/
 Automaton* final_automaton;
 
+/**
+*	@brief generates a new automaton node and initializes common params 
+*	
+*	@param nodetype 
+*		type of node to be created, defined in enum nodetype_t 
+*	@param var 
+*		location of variable in question. this is usually 0 
+*		for everything except IDENTIFIER_N and COMPARATOR_N
+*	@param left 
+*		pointer to left child 
+*	@param right 
+*		pointer to right child 
+*	@return pointer to new node 
+*/
 Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton* right);
 
+/** 	@brief deletes an automaton
+*
+*	@param a pointer to root of automaton 
+*/
 void delete_automaton(Automaton* a);
 
+/**	@brief prints automaton in preorder format 
+*
+*	@param a pointer to root of automaton
+*/
 void print_automaton(Automaton* a);
 
+/**	@brief performs alternating automaton verification using a DFS
+*
+*	@param a
+*		pointer to automaton
+*	@param n
+*		index of trace record, usually 0
+*	@return 
+*		boolean indicating if trace is valid 
+*/
 bool DFS(Automaton* a, int n);
 
 #endif
