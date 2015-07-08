@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 	for(i = 0; i < MAX_INPUT_SIZE && !feof(data_file) && !ferror(data_file); i++){
 		int fscanf_retval = 0;
 		for(j = 0; j < read_params ; j++){
-			fscanf_retval = fscanf(data_file, "%lG", &sym_vals[i][sym_table_indices[j]]);
+			fscanf_retval = fscanf(data_file, "%lG%*c", &sym_vals[i][sym_table_indices[j]]);
 			if(fscanf_retval != 1)
 				break;
 #ifdef VERBOSE
