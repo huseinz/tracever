@@ -37,6 +37,6 @@
 "="		      	{   					return *yytext;		}
 ";"		      	{   					return *yytext;		}
 \n 	      	      	{  } 
-.		      	{  }
+.		      	{ printf("UNRECOGNIZED TOKEN %s\n", yytext); }
 
 %%
