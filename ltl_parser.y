@@ -28,17 +28,16 @@ void print_status(const char* str);
 %type  <node>   automaton;
 %type  <node>   ltlformula;
 
-//%token <tval>	INTEGER
 %token <fval>   REAL
 %token <sval>	IDENTIFIER
-%token <sval> 	COMPARATOR
-//%token DATA
+%token <sval> COMPARATOR
 
 %precedence  	UNTIL  
 %right  	IMPLIES 
 %precedence	OR 
 %precedence 	AND
-%precedence  	GLOBAL FUTURE
+%precedence  	GLOBAL 
+%precedence     FUTURE
 %precedence  	NOT
 
 %% 
