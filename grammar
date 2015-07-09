@@ -14,23 +14,19 @@ ltl_parser:
 	automata
 	;
 
-automata:
-	ltlformula
-	| automata AND automata
-	| automata OR automata
-	;
-
-ltlformula:
+automaton:
 	IDENTIFIER
-	| GLOBAL ltlformula
-	| FUTURE ltlformula
-	| NOT ltlformula
-	| ltlformula UNTIL ltlformula
-	| ltlformula AND ltlformula
-	| ltlformula OR ltlformula
-	| ltlformula IMPLIES ltlformula
+	| GLOBAL automaton
+	| FUTURE automaton
+	| NOT automaton
+	| automaton UNTIL automaton
+	| automaton AND automaton
+	| automaton OR automaton
+	| automaton IMPLIES automaton
 	| IDENTIFIER COMPARATOR REAL
-	| '(' ltlformula ')'
+//	| IDENTIFIER COMPARATOR IDENTIFIER
+//	| IDENTIFIER ARITHMETIC IDENTIFIER
+	| '(' automaton ')'
 	;
 
 

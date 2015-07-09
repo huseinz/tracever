@@ -17,9 +17,9 @@ void print_status(const char* str);
 
 %union
 {
-	double fval;
-	char* sval;
-	struct Automaton* node;
+	double 	fval;
+	char* 	sval;
+	struct 	Automaton* node;
 }
 
 %destructor { free ($$); } <sval>
