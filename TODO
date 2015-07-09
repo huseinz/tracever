@@ -1,0 +1,5 @@
+- implement IDENTIFIER COMPARATOR IDENTIFIER 
+- implement arithmetic
+- convert to C++ class
+- implement associativity in IDENTIFIER COMPARATOR REAL 
+- reimplement COMPARATOR_N so it compares its children 
