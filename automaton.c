@@ -30,18 +30,25 @@ void delete_automaton(Automaton* a){
 void print_automaton(Automaton* a){
 	if( a == NULL )
 		return;
-	switch(a->nodetype){
-		case AND_N: puts("AND node"); break;
-		case OR_N: puts("OR node"); break;
-		//return early if TRUE_N node 
-		case TRUE_N: puts("TRUE node"); return;
-		case IDENT_N: puts("IDENT node"); break;
-		case NOT_N: puts("NOT node");	break;
-		case COMPARATOR_N: puts("COMPARE node"); break;
-		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
-	}
-	print_automaton(a->left);
+	puts(get_nodename_literal(a));
+
+	if(a->nodetype != TRUE_N)
+		print_automaton(a->left);
 	print_automaton(a->right);
+}
+
+
+char* get_nodename_literal(Automaton* a){	
+	switch(a->nodetype){
+		case AND_N: return ("AND"); 
+		case OR_N: return ("OR"); 
+		case TRUE_N: return ("TRUE"); 
+		case IDENT_N: return ("IDENT"); 
+		case NOT_N: return ("NOT");	
+		case COMPARATOR_N: return ("COMPARE"); 
+		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
+			return "ERROR";
+	}
 }
 
 //helper function for DFS 
@@ -67,16 +74,7 @@ bool evaluate_comparator(Automaton* a, int n){
 bool DFS(Automaton* a, int n){
 
 #ifdef YYDEBUG
-	printf("n = %d ", n);
-	switch(a->nodetype){
-		case AND_N: puts("AND"); break;
-		case OR_N: puts("OR"); break;
-		case TRUE_N: puts("TRUE"); break;
-		case IDENT_N: puts("IDENT"); break;
-		case NOT_N: puts("NOT");	break;
-		case COMPARATOR_N: puts("COMPARE"); break;
-		default: puts("!UNKNOWN NODE!"); break;
-	}
+	printf("n = %d %s\n", n, get_nodename_literal(a));
 #endif
 #ifdef VERBOSE
 	DFS_calls_made++;
