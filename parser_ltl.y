@@ -11,7 +11,8 @@ int sym_index = 1;
 void yyerror(const char* s);
 int sym_lookup(const char* str);
 void print_status(const char* str);
-
+void automaton_to_dot(Automaton* a, const char* fn);
+void automaton_to_dot_aux(Automaton* a, FILE* out);
 %}
 
 
@@ -45,13 +46,11 @@ ltl_parser:
 					/* automaton completed - set global pointer */
 					final_automaton = $1;
 
-				#ifdef VERBOSE
 					puts("Created final automaton\n");
 					puts("Printing automaton");
 					print_automaton(final_automaton);
 					puts("");
-				#endif
-					//delete_automaton(final_automaton);
+					automaton_to_dot(final_automaton, "automaton.dot");
 				}
 	;
 
@@ -186,4 +185,58 @@ void print_status(const char* str){
 #ifdef VERBOSE
 	puts(str);
 #endif
+}
+
+void automaton_to_dot(Automaton* a, const char* fn){
+	
+	FILE* out = fopen(fn, "w");
+	fprintf(out, "digraph Automaton{\n");
+	
+	automaton_to_dot_aux(a, out);
+
+	fprintf(out, "}\n");
+	fclose(out);
+}
+
+void automaton_to_dot_aux(Automaton* a, FILE* out){
+
+	if(a->left){
+		
+		//arrow
+		fprintf(out, "%d -> %d;\n", a->num, a->left->num);
+		//label
+		fprintf(out, "%d [label=\"%s %s%s\"];\n",
+			a->num,
+			a->nodetype == IDENT_N || a->nodetype == COMPARATOR_N ? sym[a->var] : get_nodename_literal(a),
+			a->nodetype == COMPARATOR_N ? "CMP" : "",
+			a->accepting ? "(*)" : "");
+
+		fprintf(out, "%d [label=\"%s %s%s\"];\n",
+			a->left->num,
+			a->left->nodetype == IDENT_N || a->left->nodetype == COMPARATOR_N ? sym[a->left->var] : get_nodename_literal(a),
+			a->left->nodetype == COMPARATOR_N ? "CMP" : "",
+			a->left->accepting ? "(*)" : "");
+
+		if(a->nodetype != TRUE_N)
+			automaton_to_dot_aux(a->left, out);
+	}
+	if(a->right){
+	
+		//arrow
+		fprintf(out, "%d -> %d;\n", a->num, a->right->num);
+		//label
+		fprintf(out, "%d [label=\"%s %s%s\"];\n",
+			a->num,
+			a->nodetype == IDENT_N || a->nodetype == COMPARATOR_N ? sym[a->var] : get_nodename_literal(a),
+			a->nodetype == COMPARATOR_N ? "CMP" : "",
+			a->accepting ? "(*)" : "");
+
+		fprintf(out, "%d [label=\"%s %s%s\"];\n",
+			a->right->num,
+			a->right->nodetype == IDENT_N || a->right->nodetype == COMPARATOR_N ? sym[a->right->var] : get_nodename_literal(a),
+			a->right->nodetype == COMPARATOR_N ? "CMP" : "",
+			a->right->accepting ? "(*)" : "");
+
+		automaton_to_dot_aux(a->right, out);
+	}
 }

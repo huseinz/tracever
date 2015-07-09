@@ -14,6 +14,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	newnode->left = left;
 	newnode->right = right;
 	newnode->accepting = false;
+	newnode->num = num_nodes++;
 	return newnode;
 }
 

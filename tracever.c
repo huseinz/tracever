@@ -38,10 +38,8 @@ int main(int argc, char* argv[]) {
 	char* ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
 
 	/* run parser */
-#ifdef VERBOSE
 	printf("LTL Formula: %s\n", linebuffer);
 	puts("Begin parsing and automaton generation");
-#endif
 	YY_BUFFER_STATE b = yy_scan_string(linebuffer);
 	yy_switch_to_buffer(b);
 	yyparse();
