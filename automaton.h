@@ -119,4 +119,6 @@ bool DFS(Automaton* a, int n);
 */
 bool evaluate_comparator(Automaton* a, int n);
 
+char* get_nodename_literal(Automaton* a);
+
 #endif
