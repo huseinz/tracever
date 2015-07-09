@@ -91,8 +91,8 @@ automaton:
 				}
 	| automaton UNTIL automaton { /* generate UNTIL node */
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
-					Automaton* UNTIL_node  = create_node(OR_N, $3, UNTILB_node);
+					Automaton* UNTILB_node = create_node(AND_N, TRUE_node, $1);
+					Automaton* UNTIL_node  = create_node(OR_N, UNTILB_node, $3);
 					TRUE_node->left = UNTIL_node;
 					UNTIL_node->accepting = 1;
 					$$ = UNTIL_node;
