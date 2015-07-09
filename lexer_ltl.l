@@ -1,5 +1,5 @@
 %{
-#include "ltl_parser.tab.h"
+#include "parser_ltl.tab.h"
 %}
 
 %option noyywrap

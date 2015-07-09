@@ -5,7 +5,7 @@
 */
 
 #include "automaton.h"
-#include "lex.yy.h"
+#include "lex_ltl.yy.h"
 
 #define BUFFER_SIZE 1000
 

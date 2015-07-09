@@ -10,11 +10,16 @@
 #define MAX_INPUT_SIZE 1000
 #define MAX_PARAMS     20	
 
+/* input data table */
 double sym_vals[MAX_INPUT_SIZE][MAX_PARAMS];
 
+/* number of traces */
 int n_max;
+
+/* DFS call counter */
 long DFS_calls_made;
 
+/* node types */
 typedef enum {
 	AND_N,
 	OR_N,
@@ -24,6 +29,7 @@ typedef enum {
 	COMPARATOR_N
 }nodetype_t;
 
+/* comparator types */
 typedef enum{
 	GTR_THAN = COMPARATOR_N + 1,
 	LESS_THAN,
@@ -33,6 +39,7 @@ typedef enum{
 	NOT_EQUAL
 }comparator_t;
 
+/* Automaton node declaration */
 typedef struct Automaton{
 	
 	//the node's type
@@ -53,11 +60,15 @@ typedef struct Automaton{
 
 }Automaton;
 
-/* bad place to put this*/
+/* pointer to the completed automaton */
+/* this is a bad place to put this */
 Automaton* final_automaton;
 
 /**
-*	@brief generates a new automaton node and initializes common params 
+*	@brief 	generates a new automaton node and initializes common params 
+*
+*		other params (such as var, accepting, comparator, etc)
+*		need to be set manually 
 *	
 *	@param nodetype 
 *		type of node to be created, defined in enum nodetype_t 
@@ -68,9 +79,10 @@ Automaton* final_automaton;
 *		pointer to left child 
 *	@param right 
 *		pointer to right child 
+*
 *	@return pointer to new node 
 */
-Automaton* create_node(nodetype_t nodetype, int var, Automaton* left, Automaton* right);
+Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right);
 
 /** 	@brief deletes an automaton
 *
@@ -94,5 +106,17 @@ void print_automaton(Automaton* a);
 *		boolean indicating if trace is valid 
 */
 bool DFS(Automaton* a, int n);
+
+/**	@brief 	helper function for DFS 
+*		evaluates COMPARATOR_N node value 
+*	
+*	@param a
+*		COMPARATOR_N node 
+*	@param n
+*		trace n to be tested 
+*	@return 
+*		comparator bool 
+*/
+bool evaluate_comparator(Automaton* a, int n);
 
 #endif

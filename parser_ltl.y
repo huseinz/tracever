@@ -17,7 +17,6 @@ void print_status(const char* str);
 
 %union
 {
-	long  tval;
 	double fval;
 	char* sval;
 	struct Automaton* node;
@@ -26,26 +25,20 @@ void print_status(const char* str);
 %destructor { free ($$); } <sval>
 
 %type  <node>   automaton;
-%type  <node>   ltlformula;
 
 %token <fval>   REAL
 %token <sval>	IDENTIFIER
-%token <sval> COMPARATOR
+%token <sval>	COMPARATOR
 
 %precedence  	UNTIL  
-%right  	IMPLIES 
 %precedence	OR 
 %precedence 	AND
+%right  	IMPLIES 
 %precedence  	GLOBAL 
 %precedence     FUTURE
 %precedence  	NOT
 
 %% 
-
-/*ltl_parser:
-	ltl_parser statement  			
-	| %empty  
-	;*/
 
 ltl_parser:
 	automaton 	 	{
@@ -63,21 +56,6 @@ ltl_parser:
 	;
 
 automaton:
-	ltlformula             	{	$$ = $1;
-				}
-	| automaton AND automaton {	/* generate AND_N node */
-					Automaton* AND_node = create_node(AND_N, 0, $1, $3);
-					$$ = AND_node;
-					print_status("Created AND automaton node");
-				}
-	| automaton OR automaton { 	/* generate OR_N node */
-					Automaton* OR_node = create_node(OR_N, 0, $1, $3);
-					$$ = OR_node;
-					print_status("Created OR automaton node");
-				}
-	;
-
-ltlformula:
 	
 	IDENTIFIER		{	/* check if identifier is symbol table, add it if it isn't */
 					if(sym_lookup($1) == 0){
@@ -88,59 +66,60 @@ ltlformula:
 					}
 					
 					/* generate IDENT_N node */
-					Automaton* IDENT_node = create_node(IDENT_N, sym_lookup($1), NULL, NULL);
+					Automaton* IDENT_node = create_node(IDENT_N, NULL, NULL);
+					IDENT_node->var = sym_lookup($1);
 					IDENT_node->accepting = 1;
 					$$ = IDENT_node;
 					print_status("Created IDENTIFIER node");				
 					free($1);
 				}
-	| GLOBAL ltlformula 	{ 	/* generate GLOBAL node */
-					Automaton* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
-					Automaton* GLOBAL_node = create_node(AND_N, 0, TRUE_node, $2);
+	| GLOBAL automaton 	{ 	/* generate GLOBAL node */
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $2);
 					TRUE_node->left = GLOBAL_node;
 					TRUE_node->accepting = 1;
 					GLOBAL_node->accepting = 1;
 					$$ = GLOBAL_node;
 					print_status("Created GLOBAL node");
 				}
-	| FUTURE ltlformula 	{ 	/* generate FUTURE node */
-					Automaton* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
-					Automaton* FUTURE_node = create_node(OR_N, 0, TRUE_node, $2);
+	| FUTURE automaton 	{ 	/* generate FUTURE node */
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $2);
 					TRUE_node->left = FUTURE_node;
 					$$ = FUTURE_node;
-					print_status("Created FUTURE ltlformula node");
+					print_status("Created FUTURE automaton node");
 				}
-	| ltlformula UNTIL ltlformula { /* generate UNTIL node */
-					Automaton* TRUE_node   = create_node(TRUE_N, 0, NULL, NULL);
-					Automaton* UNTILB_node = create_node(AND_N, 0, $1, TRUE_node);
-					Automaton* UNTIL_node  = create_node(OR_N, 0, $3, UNTILB_node);
+	| automaton UNTIL automaton { /* generate UNTIL node */
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
+					Automaton* UNTIL_node  = create_node(OR_N, $3, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
 					UNTIL_node->accepting = 1;
 					$$ = UNTIL_node;
-					print_status("Created UNTIL ltlformula node");
+					print_status("Created UNTIL automaton node");
 				}
 
-	| NOT ltlformula 	{	/* generate NOT_n node */
-					Automaton* NOT_node = create_node(NOT_N, 0, $2, NULL);
+	| NOT automaton 	{	/* generate NOT_n node */
+					Automaton* NOT_node = create_node(NOT_N, $2, NULL);
 					NOT_node->accepting = 1;
 					$$ = NOT_node;
-					print_status("Created NOT ltlformula node");
+					print_status("Created NOT automaton node");
 				}
-	| ltlformula OR ltlformula {	/* generate OR_N node */ 
-					Automaton* OR_node = create_node(OR_N, 0, $1, $3);
+	| automaton OR automaton {	/* generate OR_N node */ 
+					Automaton* OR_node = create_node(OR_N, $1, $3);
 					$$ = OR_node;
-					print_status("Created OR ltlformula node");
+					print_status("Created OR automaton node");
 				}
-	| ltlformula AND ltlformula {	/* generate AND_N node */ 
-					Automaton* AND_node = create_node(AND_N, 0, $1, $3);
+	| automaton AND automaton {	/* generate AND_N node */ 
+					Automaton* AND_node = create_node(AND_N, $1, $3);
 					$$ = AND_node;
-					print_status("Created AND ltlformula node");
+					print_status("Created AND automaton node");
 				}
-	| ltlformula IMPLIES ltlformula { /* generate IMPLIES node */
-					Automaton* IMPLIES_NOT_node = create_node(NOT_N, 0, $1, 0);
-					Automaton* IMPLIES_node = create_node(OR_N, 0, IMPLIES_NOT_node, $3);
+	| automaton IMPLIES automaton { /* generate IMPLIES node */
+					Automaton* IMPLIES_NOT_node = create_node(NOT_N, $1, NULL);
+					Automaton* IMPLIES_node = create_node(OR_N, IMPLIES_NOT_node, $3);
 					$$ = IMPLIES_node;
-					print_status("Created IMPLIES ltlformula node");
+					print_status("Created IMPLIES automaton node");
 				}
 	| IDENTIFIER COMPARATOR REAL {  /* generate COMPARATOR_N node */
 
@@ -152,7 +131,8 @@ ltlformula:
 						sym[ sym_index++ ] = strdup($1);
 					}
 					
-					Automaton* COMPARE_node = create_node(COMPARATOR_N, sym_lookup($1), NULL, NULL);
+					Automaton* COMPARE_node = create_node(COMPARATOR_N, NULL, NULL);
+					COMPARE_node->var = sym_lookup($1);
 					COMPARE_node->accepting = 1;
 					COMPARE_node->comparison_val = $3;
 					
@@ -179,7 +159,7 @@ ltlformula:
 					free($1);
 					free($2);
 				}
-	| '(' ltlformula ')'  	{ 	/* parentheses */
+	| '(' automaton ')'  	{ 	/* parentheses */
 					$$ = $2; 
 				}
 	;
