@@ -93,7 +93,7 @@ automaton:
 					Automaton* UNTILB_node = create_node(AND_N, TRUE_node, $1);
 					Automaton* UNTIL_node  = create_node(OR_N, UNTILB_node, $3);
 					TRUE_node->left = UNTIL_node;
-					UNTIL_node->accepting = 1;
+	//				UNTIL_node->accepting = 1;
 					$$ = UNTIL_node;
 					print_status("Created UNTIL automaton node");
 				}
