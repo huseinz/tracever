@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
 
 	/* run parser */
 	printf("LTL Formula: %s\n", linebuffer);
-	puts("Begin parsing and automaton generation");
 	YY_BUFFER_STATE b = yy_scan_string(linebuffer);
 	yy_switch_to_buffer(b);
 	yyparse();
@@ -75,13 +74,13 @@ int main(int argc, char* argv[]) {
 			fscanf_retval = fscanf(data_file, "%lG%*c", &sym_vals[i][sym_table_indices[j]]);
 			if(fscanf_retval != 1)
 				break;
-#ifdef VERBOSE
+#ifdef YYDEBUG
 			printf("%12lG", sym_vals[i][sym_table_indices[j]]);
 #endif
 		}
 		if(fscanf_retval != 1)
 			break;
-#ifdef VERBOSE
+#ifdef YYDEBUG
 		puts("");
 #endif
 	}
@@ -96,10 +95,8 @@ int main(int argc, char* argv[]) {
 	//finally
 	bool DFS_retval = DFS(final_automaton, 0); 
 
-#ifdef VERBOSE
 	printf("DFS calls made: %ld\n\n", DFS_calls_made);
 	printf("Automaton returns ");
-#endif
 	puts( DFS_retval ? "true" : "false" );
 
 	//clean up

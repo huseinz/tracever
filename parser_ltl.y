@@ -46,11 +46,13 @@ ltl_parser:
 					/* automaton completed - set global pointer */
 					final_automaton = $1;
 
+					#ifdef VERBOSE
 					puts("Created final automaton\n");
 					puts("Printing automaton");
 					print_automaton(final_automaton);
 					puts("");
 					automaton_to_dot(final_automaton, "automaton.dot");
+					#endif
 				}
 	;
 

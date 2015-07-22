@@ -78,9 +78,7 @@ bool DFS(Automaton* a, int n){
 #ifdef YYDEBUG
 	printf("n = %d %s\n", n, get_nodename_literal(a));
 #endif
-#ifdef VERBOSE
 	DFS_calls_made++;
-#endif
 
 	if(a == NULL)
 		return false; //questionable
@@ -97,10 +95,8 @@ bool DFS(Automaton* a, int n){
 		return b;
 	}
 	else{
-			if( n  == n_max){
-				printf("Reached end, %s->accepting == %s\n", get_nodename_literal(a), a->accepting ? "true" : "false");
+			if( n  == n_max)
 				return a->accepting;
-			}
 
 			switch(a->nodetype){
 				case TRUE_N:		return DFS(a->left, n + 1);
