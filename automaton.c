@@ -14,6 +14,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	newnode->left = left;
 	newnode->right = right;
 	newnode->accepting = false;
+	newnode->num = num_nodes++;
 	return newnode;
 }
 
@@ -46,6 +47,7 @@ char* get_nodename_literal(Automaton* a){
 		case IDENT_N: return ("IDENT"); 
 		case NOT_N: return ("NOT");	
 		case COMPARATOR_N: return ("COMPARE"); 
+		case FUTURE_N: return ("FUTURE");
 		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
 			return "ERROR";
 	}
@@ -76,9 +78,7 @@ bool DFS(Automaton* a, int n){
 #ifdef YYDEBUG
 	printf("n = %d %s\n", n, get_nodename_literal(a));
 #endif
-#ifdef VERBOSE
 	DFS_calls_made++;
-#endif
 
 	if(a == NULL)
 		return false; //questionable
@@ -86,9 +86,16 @@ bool DFS(Automaton* a, int n){
 		return DFS(a->left, n) && DFS(a->right, n);
 	else if(a->nodetype == OR_N)
 		return DFS(a->left, n) || DFS(a->right, n);
+	else if(a->nodetype == FUTURE_N){
+		if( n == n_max )
+			return a->accepting;
+		bool b = DFS(a->left, n) || DFS(a->right, n);
+		if(b)
+			a->accepting = b;
+		return b;
+	}
 	else{
-		if(n < n_max){
-			if( n + 1 == n_max)
+			if( n  == n_max)
 				return a->accepting;
 
 			switch(a->nodetype){
@@ -96,14 +103,8 @@ bool DFS(Automaton* a, int n){
 				case IDENT_N:		return sym_vals[n][a->var];
 				case NOT_N:		return !DFS(a->left, n);
 				case COMPARATOR_N:	return evaluate_comparator(a, n);
-				//should never happen
-				case AND_N: 		//fallthrough
-				case OR_N:  		//fallthrough
 				default:		fprintf(stderr, "DFS: unhandled node type %d", a->nodetype);
 			}
-		}
-		else
-			return false;
 	}
 	return false;
 }

@@ -19,6 +19,8 @@ int n_max;
 /* DFS call counter */
 long DFS_calls_made;
 
+int num_nodes;
+
 /* node types */
 typedef enum {
 	AND_N,
@@ -26,7 +28,8 @@ typedef enum {
 	TRUE_N,
 	IDENT_N,
 	NOT_N,
-	COMPARATOR_N
+	COMPARATOR_N,
+	FUTURE_N
 }nodetype_t;
 
 /* comparator types */
@@ -42,6 +45,7 @@ typedef enum{
 /* Automaton node declaration */
 typedef struct Automaton{
 	
+	int num;
 	//the node's type
 	nodetype_t nodetype;
 	//if node is testing a variable, this contains
