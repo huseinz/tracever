@@ -81,9 +81,9 @@ bool DFS(Automaton* a, int n){
 	DFS_calls_made++;
 
 	if(a == NULL)
-		return false; //questionable
+		return true; //questionable
 	if(a->nodetype == AND_N)
-		return DFS(a->left, n) && DFS(a->right, n);
+		return DFS(a->right, n) && DFS(a->left, n);
 	else if(a->nodetype == OR_N)
 		return DFS(a->left, n) || DFS(a->right, n);
 	else if(a->nodetype == FUTURE_N){

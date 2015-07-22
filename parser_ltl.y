@@ -79,7 +79,6 @@ automaton:
 					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $2);
 					TRUE_node->left = GLOBAL_node;
 					TRUE_node->accepting = 1;
-					//GLOBAL_node->accepting = 1;
 					$$ = GLOBAL_node;
 					print_status("Created GLOBAL node");
 				}
