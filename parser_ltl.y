@@ -77,13 +77,13 @@ automaton:
 					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $2);
 					TRUE_node->left = GLOBAL_node;
 					TRUE_node->accepting = 1;
-					GLOBAL_node->accepting = 1;
+					//GLOBAL_node->accepting = 1;
 					$$ = GLOBAL_node;
 					print_status("Created GLOBAL node");
 				}
 	| FUTURE automaton 	{ 	/* generate FUTURE node */
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $2);
+					Automaton* FUTURE_node = create_node(FUTURE_N, TRUE_node, $2);
 					TRUE_node->left = FUTURE_node;
 					$$ = FUTURE_node;
 					print_status("Created FUTURE automaton node");

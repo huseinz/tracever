@@ -28,7 +28,8 @@ typedef enum {
 	TRUE_N,
 	IDENT_N,
 	NOT_N,
-	COMPARATOR_N
+	COMPARATOR_N,
+	FUTURE_N
 }nodetype_t;
 
 /* comparator types */
