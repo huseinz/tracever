@@ -76,37 +76,39 @@ bool evaluate_comparator(Automaton* a, int n){
 bool DFS(Automaton* a, int n){
 
 #ifdef YYDEBUG
-	printf("n = %d %s\n", n, get_nodename_literal(a));
+        printf("n = %d %s\n", n, get_nodename_literal(a));
 #endif
-	DFS_calls_made++;
+        DFS_calls_made++;
 
-	if(a == NULL)
-		return true; //questionable
-	if(a->nodetype == AND_N)
-		return DFS(a->right, n) && DFS(a->left, n);
-	else if(a->nodetype == OR_N)
-		return DFS(a->left, n) || DFS(a->right, n);
-	else if(a->nodetype == FUTURE_N){
-		if( n == n_max )
-			return a->accepting;
-		bool b = DFS(a->left, n) || DFS(a->right, n);
-		if(b)
-			a->accepting = b;
-		return b;
-	}
-	else{
-			if( n  == n_max)
-				return a->accepting;
+        if(a == NULL)
+                return true; //questionable
+        if(a->nodetype == AND_N)
+                return DFS(a->right, n) && DFS(a->left, n);
+        else if(a->nodetype == OR_N)
+                return DFS(a->left, n) || DFS(a->right, n);
+        else if(a->nodetype == FUTURE_N){
+                if( n == n_max )
+                        return a->accepting;
+                if( a->accepting )
+                        return true;
+                bool b = DFS(a->right, n);
+                if(b)
+                        a->accepting = true;
+                return DFS(a->left, n);
+        }
+        else{
+                if( n  == n_max)
+                                return a->accepting;
 
-			switch(a->nodetype){
-				case TRUE_N:		return DFS(a->left, n + 1);
-				case IDENT_N:		return sym_vals[n][a->var];
-				case NOT_N:		return !DFS(a->left, n);
-				case COMPARATOR_N:	return evaluate_comparator(a, n);
-				default:		fprintf(stderr, "DFS: unhandled node type %d", a->nodetype);
-			}
-	}
-	return false;
+                switch(a->nodetype){
+                        case TRUE_N:            return DFS(a->left, n + 1);
+                        case IDENT_N:           return sym_vals[n][a->var];
+                        case NOT_N:             return !DFS(a->left, n);
+                        case COMPARATOR_N:      return evaluate_comparator(a, n);
+                        default:                fprintf(stderr, "DFS: unhandled node type %d", a->nodetype);
+                }
+        }
+        return false;
 }
 
 
