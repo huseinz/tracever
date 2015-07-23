@@ -4,7 +4,6 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	Automaton* newnode = malloc(sizeof(Automaton));
 	
 	if( !newnode )
-		//throw some fatal error
 		return NULL;
 	
 	newnode->nodetype = nodetype;
@@ -83,7 +82,7 @@ bool DFS(Automaton* a, int n){
         DFS_calls_made++;
 
         if( !a )
-                return true; //questionable
+                return true; 
         if(a->nodetype == AND_N)
                 return DFS(a->left, n) && DFS(a->right, n);
         else if(a->nodetype == OR_N)

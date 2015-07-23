@@ -51,8 +51,8 @@ ltl_parser:
 					puts("Printing automaton");
 					print_automaton(final_automaton);
 					puts("");
-					automaton_to_dot(final_automaton, "automaton.dot");
 					#endif
+					automaton_to_dot(final_automaton, "automaton.dot");
 				}
 	;
 
