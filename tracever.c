@@ -88,14 +88,14 @@ int main(int argc, char* argv[]) {
 	//important, set nmax to number of input traces 
 	n_max = i ;
 
-	printf("Input length:\t\t%d\n", n_max);
+	printf("Input length:   %-d\n", n_max);
 #ifdef VERBOSE
 	puts("\nBegin DFS");
 #endif
 	//finally
 	bool DFS_retval = DFS(final_automaton, 0); 
 
-	printf("DFS calls made:\t%ld\n\n", DFS_calls_made);
+	printf("DFS calls made: %-ld\n\n", DFS_calls_made);
 	printf("Automaton returns ");
 	puts( DFS_retval ? "true" : "false" );
 
