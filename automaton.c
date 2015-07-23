@@ -29,7 +29,7 @@ void delete_automaton(Automaton* a){
 }
 
 void print_automaton(Automaton* a){
-	if( a == NULL )
+	if( !a )
 		return;
 	puts(get_nodename_literal(a));
 
@@ -40,6 +40,8 @@ void print_automaton(Automaton* a){
 
 
 char* get_nodename_literal(Automaton* a){	
+	if(!a)
+		return "NULL";
 	switch(a->nodetype){
 		case AND_N: return ("AND"); 
 		case OR_N: return ("OR"); 
@@ -80,7 +82,7 @@ bool DFS(Automaton* a, int n){
 #endif
         DFS_calls_made++;
 
-        if(a == NULL)
+        if( !a )
                 return true; //questionable
         if(a->nodetype == AND_N)
                 return DFS(a->left, n) && DFS(a->right, n);
