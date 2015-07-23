@@ -83,30 +83,32 @@ bool DFS(Automaton* a, int n){
         if(a == NULL)
                 return true; //questionable
         if(a->nodetype == AND_N)
-                return DFS(a->right, n) && DFS(a->left, n);
+                return DFS(a->left, n) && DFS(a->right, n);
         else if(a->nodetype == OR_N)
                 return DFS(a->left, n) || DFS(a->right, n);
-        else if(a->nodetype == FUTURE_N){
-                if( n == n_max )
-                        return a->accepting;
-                if( a->accepting )
-                        return true;
-                bool b = DFS(a->right, n);
-                if(b)
-                        a->accepting = true;
-                return DFS(a->left, n);
-        }
         else{
-                if( n  == n_max)
-                                return a->accepting;
-
+		bool b = false;
                 switch(a->nodetype){
-                        case TRUE_N:            return DFS(a->left, n + 1);
-                        case IDENT_N:           return sym_vals[n][a->var];
-                        case NOT_N:             return !DFS(a->left, n);
-                        case COMPARATOR_N:      return evaluate_comparator(a, n);
-                        default:                fprintf(stderr, "DFS: unhandled node type %d", a->nodetype);
+                        case TRUE_N:            
+				b = true;
+				break;
+                        case IDENT_N:           
+				b = sym_vals[n][a->var];
+				break;
+                        case NOT_N:             
+				b = !DFS(a->left, n);
+				break;
+                        case COMPARATOR_N:      
+				b = evaluate_comparator(a, n);
+				break;
+                        default: 
+				fprintf(stderr, "DFS: unhandled node type %d", a->nodetype);
+			
                 }
+		if( b )
+			return n == n_max - 1 ? a->accepting : DFS(a->left, n + 1);
+		else 
+			return false;
         }
         return false;
 }
