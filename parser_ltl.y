@@ -13,6 +13,7 @@ int sym_lookup(const char* str);
 void print_status(const char* str);
 void automaton_to_dot(Automaton* a, const char* fn);
 void automaton_to_dot_aux(Automaton* a, FILE* out);
+Automaton* generate_comparator_node(const char* ident, const char* comp, double val);
 %}
 
 
@@ -121,41 +122,15 @@ automaton:
 					print_status("Created IMPLIES automaton node");
 				}
 	| IDENTIFIER COMPARATOR REAL {  /* generate COMPARATOR_N node */
-
-					/* check if identifier is in symbol table, add it if it isn't */
-					if(sym_lookup($1) == 0){
-						#ifdef VERBOSE
-						printf("Adding %s to symbol table at position %d\n", $1, sym_index);
-						#endif
-						sym[ sym_index++ ] = strdup($1);
-					}
 					
-					Automaton* COMPARE_node = create_node(COMPARATOR_N, NULL, NULL);
-					COMPARE_node->var = sym_lookup($1);
-					COMPARE_node->accepting = 1;
-					COMPARE_node->comparison_val = $3;
-					
-					/* parse comparator */
-					comparator_t comparator = EQUAL;
-
-					if( strcmp($2, "<") == 0)
-						comparator = LESS_THAN;	
-					if( strcmp($2, ">") == 0)
-						comparator = GTR_THAN;	
-					if( strcmp($2, "<=") == 0)
-						comparator = LESS_OR_EQ;	
-					if( strcmp($2, ">=") == 0)
-						comparator = GTR_OR_EQ;	
-					if( strcmp($2, "==") == 0)
-						comparator = EQUAL;	
-					if( strcmp($2, "!=") == 0)
-						comparator = NOT_EQUAL;
-					
-					COMPARE_node->comparator = comparator;
-
-					$$ = COMPARE_node;
-					print_status("Created COMPARE node");
+					$$ = generate_comparator_node($1, $2, $3);
 					free($1);
+					free($2);
+				}
+	| REAL COMPARATOR IDENTIFIER {  /* generate COMPARATOR_N node */
+					
+					$$ = generate_comparator_node($3, $2, $1);
+					free($3);
 					free($2);
 				}
 	| '(' automaton ')'  	{ 	/* parentheses */
@@ -239,4 +214,41 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 
 		automaton_to_dot_aux(a->right, out);
 	}
+}
+
+Automaton* generate_comparator_node(const char* ident, const char* comp, double val){
+
+	/* check if identifier is in symbol table, add it if it isn't */
+	if(sym_lookup(ident) == 0){
+	#ifdef VERBOSE
+		printf("Adding %s to symbol table at position %d\n", ident, sym_index);
+	#endif
+		sym[ sym_index++ ] = strdup(ident);
+	}
+	
+	Automaton* COMPARE_node = create_node(COMPARATOR_N, NULL, NULL);
+	COMPARE_node->var = sym_lookup(ident);
+	COMPARE_node->accepting = 1;
+	COMPARE_node->comparison_val = val;
+	
+	/* parse comparator */
+	comparator_t comparator = EQUAL;
+	
+	if( strcmp(comp, "<") == 0)
+		comparator = LESS_THAN;	
+	if( strcmp(comp, ">") == 0)
+		comparator = GTR_THAN;	
+	if( strcmp(comp, "<=") == 0)
+		comparator = LESS_OR_EQ;	
+	if( strcmp(comp, ">=") == 0)
+		comparator = GTR_OR_EQ;	
+	if( strcmp(comp, "==") == 0)
+		comparator = EQUAL;	
+	if( strcmp(comp, "!=") == 0)
+		comparator = NOT_EQUAL;
+	
+	COMPARE_node->comparator = comparator;
+	
+	print_status("Created COMPARE node");
+	return COMPARE_node;
 }
