@@ -48,7 +48,6 @@ char* get_nodename_literal(Automaton* a){
 		case IDENT_N: return ("IDENT"); 
 		case NOT_N: return ("NOT");	
 		case COMPARATOR_N: return ("COMPARE"); 
-		case FUTURE_N: return ("FUTURE");
 		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
 			return "ERROR";
 	}
@@ -107,7 +106,7 @@ bool DFS(Automaton* a, int n){
 			
                 }
 		if( b )
-			return n == n_max - 1 ? a->accepting : DFS(a->left, n + 1);
+			return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1);
 		else 
 			return false;
         }

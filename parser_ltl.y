@@ -93,7 +93,7 @@ automaton:
 	| automaton UNTIL automaton { /* generate UNTIL node */
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
 					Automaton* UNTILB_node = create_node(AND_N, TRUE_node, $1);
-					Automaton* UNTIL_node  = create_node(OR_N, UNTILB_node, $3);
+					Automaton* UNTIL_node  = create_node(OR_N, $3, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
 					$$ = UNTIL_node;
 					print_status("Created UNTIL automaton node");
@@ -186,6 +186,7 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 			a->nodetype == COMPARATOR_N ? "CMP" : "",
 			a->accepting ? "(*)" : "");
 
+		if(a->nodetype != TRUE_N)
 		fprintf(out, "%d [label=\"%s %s%s\"];\n",
 			a->left->num,
 			a->left->nodetype == IDENT_N || a->left->nodetype == COMPARATOR_N ? sym[a->left->var] : get_nodename_literal(a),
@@ -206,13 +207,14 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 			a->nodetype == COMPARATOR_N ? "CMP" : "",
 			a->accepting ? "(*)" : "");
 
+		if(a->nodetype != TRUE_N)
 		fprintf(out, "%d [label=\"%s %s%s\"];\n",
 			a->right->num,
 			a->right->nodetype == IDENT_N || a->right->nodetype == COMPARATOR_N ? sym[a->right->var] : get_nodename_literal(a),
 			a->right->nodetype == COMPARATOR_N ? "CMP" : "",
 			a->right->accepting ? "(*)" : "");
-
-		automaton_to_dot_aux(a->right, out);
+		if(a->nodetype != TRUE_N)
+			automaton_to_dot_aux(a->right, out);
 	}
 }
 
