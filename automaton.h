@@ -50,12 +50,16 @@ typedef struct Automaton{
 	nodetype_t nodetype;
 	//if node is testing a variable, this contains
 	//its index in the symbol table
-	int 	   var;
+	int var;
+	//secondary variable index, used in COMPARATOR_N nodes
+	//for comparing two variables
+	int var_b;   
 	//comparator operator, used in COMPARATOR_N nodes
 	comparator_t comparator;
 	//whether this is an accepting state or not 
 	bool accepting;
 	//value to compare against, used in COMPARATOR_N nodes
+	//that compare against a constant
 	double     comparison_val;
 	//left child, this is the 'default'
 	struct Automaton* left;

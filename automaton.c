@@ -8,6 +8,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	
 	newnode->nodetype = nodetype;
 	newnode->var = 0;
+	newnode->var_b = 0;
 	newnode->comparator = 0;
 	newnode->comparison_val = 0;
 	newnode->left = left;
@@ -55,19 +56,23 @@ char* get_nodename_literal(Automaton* a){
 
 //helper function for DFS 
 bool evaluate_comparator(Automaton* a, int n){
+
+	double left = sym_vals[n][a->var];
+	double right = a->var_b ? sym_vals[n][a->var_b] : a->comparison_val; 
+	
 	switch(a->comparator){
 		case GTR_THAN:
-			return sym_vals[n][a->var] > a->comparison_val;
+			return left > right;
 		case LESS_THAN:
-			return sym_vals[n][a->var] < a->comparison_val;
+			return left < right;
 		case GTR_OR_EQ:
-			return sym_vals[n][a->var] >= a->comparison_val;
+			return left >= right;
 		case LESS_OR_EQ:
-			return sym_vals[n][a->var] <= a->comparison_val;
+			return left <= right;
 		case EQUAL:
-			return sym_vals[n][a->var] == a->comparison_val;
+			return left == right;
 		case NOT_EQUAL:
-			return sym_vals[n][a->var] != a->comparison_val;
+			return left != right;
 		default: fprintf(stderr, "!UNKNOWN COMPARATOR VAL %d!", a->comparator);
 			 return false;
 	}	
