@@ -97,7 +97,7 @@ automaton:
 				}
 	| automaton UNTIL automaton { /* generate UNTIL node */
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* UNTILB_node = create_node(AND_N, TRUE_node, $1);
+					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
 					Automaton* UNTIL_node  = create_node(OR_N, $3, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
 					$$ = UNTIL_node;
@@ -260,42 +260,89 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 		
 		//arrow
 		fprintf(out, "%d -> %d;\n", a->num, a->left->num);
+
 		//label
-		fprintf(out, "%d [label=\"%s %s%s\"];\n",
-			a->num,
-			a->nodetype == IDENT_N || a->nodetype == COMPARATOR_N ? sym[a->var] : get_nodename_literal(a),
-			a->nodetype == COMPARATOR_N ? "CMP" : "",
-			a->accepting ? "(*)" : "");
+		char buf[100];
+		char* ptr = buf;
 
-		if(a->nodetype != TRUE_N)
-		fprintf(out, "%d [label=\"%s %s%s\"];\n",
-			a->left->num,
-			a->left->nodetype == IDENT_N || a->left->nodetype == COMPARATOR_N ? sym[a->left->var] : get_nodename_literal(a),
-			a->left->nodetype == COMPARATOR_N ? "CMP" : "",
-			a->left->accepting ? "(*)" : "");
+		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodename_literal(a));
+		if(a->nodetype == IDENT_N)
+			ptr += sprintf(ptr, "%s ", sym[a->var]);
+		if(a->nodetype == COMPARATOR_N){
+			ptr += sprintf(ptr, "%s ", sym[a->var]);
+			ptr += a->var_b ? sprintf(ptr, "%s ", sym[a->var_b]) : sprintf(ptr, "%.2lf", a->comparison_val);
+		}
+		if(a->accepting)
+			ptr += sprintf(ptr, "(*) "); 
+		ptr += sprintf(ptr, "\"];\n");
 
-		if(a->nodetype != TRUE_N)
+		fprintf(out, "%s", buf);
+
+
+		if(a->nodetype != TRUE_N){
+			char buf[100];
+			char* ptr = buf;
+
+			ptr += sprintf(ptr, "%d [label=\"%s ", a->left->num, get_nodename_literal(a->left));
+			if(a->left->nodetype == IDENT_N)
+				ptr += sprintf(ptr, "%s ", sym[a->left->var]);
+			if(a->left->nodetype == COMPARATOR_N){
+				ptr += sprintf(ptr, "%s ", sym[a->left->var]);
+				ptr += a->left->var_b ? sprintf(ptr, "%s ", sym[a->left->var_b]) : sprintf(ptr, "%.2lf", a->left->comparison_val);
+			}
+			if(a->left->accepting)
+				ptr += sprintf(ptr, "(*) "); 
+			ptr += sprintf(ptr, "\"];\n");
+	
+			fprintf(out, "%s", buf);
+
+			//recurse
 			automaton_to_dot_aux(a->left, out);
+		}
 	}
 	if(a->right){
-	
+		
 		//arrow
 		fprintf(out, "%d -> %d;\n", a->num, a->right->num);
-		//label
-		fprintf(out, "%d [label=\"%s %s%s\"];\n",
-			a->num,
-			a->nodetype == IDENT_N || a->nodetype == COMPARATOR_N ? sym[a->var] : get_nodename_literal(a),
-			a->nodetype == COMPARATOR_N ? "CMP" : "",
-			a->accepting ? "(*)" : "");
 
-		if(a->nodetype != TRUE_N)
-		fprintf(out, "%d [label=\"%s %s%s\"];\n",
-			a->right->num,
-			a->right->nodetype == IDENT_N || a->right->nodetype == COMPARATOR_N ? sym[a->right->var] : get_nodename_literal(a),
-			a->right->nodetype == COMPARATOR_N ? "CMP" : "",
-			a->right->accepting ? "(*)" : "");
-		if(a->nodetype != TRUE_N)
+		//label
+		char buf[100];
+		char* ptr = buf;
+
+		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodename_literal(a));
+		if(a->nodetype == IDENT_N)
+			ptr += sprintf(ptr, "%s ", sym[a->var]);
+		if(a->nodetype == COMPARATOR_N){
+			ptr += sprintf(ptr, "%s ", sym[a->var]);
+			ptr += a->var_b ? sprintf(ptr, "%s ", sym[a->var_b]) : sprintf(ptr, "%.2lf", a->comparison_val);
+		}
+		if(a->accepting)
+			ptr += sprintf(ptr, "(*) "); 
+		ptr += sprintf(ptr, "\"];\n");
+
+		fprintf(out, "%s", buf);
+
+
+		if(a->nodetype != TRUE_N){
+			char buf[100];
+			char* ptr = buf;
+
+			ptr += sprintf(ptr, "%d [label=\"%s ", a->right->num, get_nodename_literal(a->right));
+			if(a->right->nodetype == IDENT_N)
+				ptr += sprintf(ptr, "%s ", sym[a->right->var]);
+			if(a->right->nodetype == COMPARATOR_N){
+				ptr += sprintf(ptr, "%s ", sym[a->right->var]);
+				ptr += a->right->var_b ? sprintf(ptr, "%s ", sym[a->right->var_b]) : sprintf(ptr, "%.2lf", a->right->comparison_val);
+			}
+			if(a->right->accepting)
+				ptr += sprintf(ptr, "(*) "); 
+			ptr += sprintf(ptr, "\"];\n");
+	
+			fprintf(out, "%s", buf);
+
+			//recurse
 			automaton_to_dot_aux(a->right, out);
+		}
 	}
 }
 
