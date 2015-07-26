@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 	yylex_destroy();
 
 	if(parser_ret != 0){
-		puts("Parse error, aborting.");
+		puts("Aborting.");
 		return -1;
 	}
 	
