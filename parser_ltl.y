@@ -37,10 +37,10 @@ Automaton* generate_comparator_node(int var_a,
 %token <sval>	IDENTIFIER
 %token <sval>	COMPARATOR
 
-%precedence  	UNTIL  
-%precedence	OR 
-%precedence 	AND
 %right  	IMPLIES 
+%right		OR
+%right		AND
+%right  	UNTIL  
 %precedence  	GLOBAL 
 %precedence     FUTURE
 %precedence  	NOT
@@ -59,6 +59,8 @@ ltl_parser:
 					puts("");
 					#endif
 					automaton_to_dot(final_automaton, "automaton.dot");
+					
+					YYACCEPT;
 				}
 	;
 

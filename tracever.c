@@ -41,9 +41,14 @@ int main(int argc, char* argv[]) {
 	printf("LTL Formula: %s\n", linebuffer);
 	YY_BUFFER_STATE b = yy_scan_string(linebuffer);
 	yy_switch_to_buffer(b);
-	yyparse();
+	bool parser_ret = yyparse();
 	yypop_buffer_state();
 	yylex_destroy();
+
+	if(parser_ret != 0){
+		puts("Parse error, aborting.");
+		return -1;
+	}
 	
 	//begin reading in input data
 	int sym_table_indices[MAX_PARAMS]; //where each var is in sym table
