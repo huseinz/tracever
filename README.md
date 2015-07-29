@@ -38,7 +38,7 @@ Use `(` and `)` to make statements unambiguous.
 
 Example data file
 ```
-G( (B > 3) && (A > 4) && (B U C) && F C)
+G( (B > 3) && (A > 4) && F C )
 A B C 
 20.2 	10.1 	0.0 
 21.1 	1000.2 	0.0 
@@ -61,7 +61,6 @@ Addition targets:
 clean
 verbose
 debug
-fast
 graph
 ```
 
