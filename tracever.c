@@ -7,6 +7,7 @@
 #include "automaton.h"
 #include "lex_ltl.yy.h"
 #include "parser_ltl.tab.h"
+#include <ctype.h>
 
 #define BUFFER_SIZE 1000
 
@@ -32,7 +33,15 @@ int main(int argc, char* argv[]) {
 
 	//read first line of formula_file
 	char linebuffer[BUFFER_SIZE];
-	fgets(linebuffer, BUFFER_SIZE, data_file);
+	char* ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
+	while(*ptr != '\0'){
+		if(*ptr == '\n'){
+			puts("No formula entered.");
+			return -1;
+		}
+		else if(!isspace(*ptr)) break;
+		ptr++;
+	}
 	printf("LTL Formula: %s\n", linebuffer);
 
 	/* run parser */
