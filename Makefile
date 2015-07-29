@@ -21,13 +21,9 @@ automaton.o: automaton.c
 	gcc -Wall -c automaton.c -O3
 	
 lex_ltl.yy.o:  lexer_ltl.l
+	flex  -Cfr -v --header-file=lex_ltl.yy.h -o lex_ltl.yy.c lexer_ltl.l
 	gcc -Wall -c lex_ltl.yy.c -O3
 
 parser_ltl.tab.o: parser_ltl.y
-	gcc -Wall -c parser_ltl.tab.c -O3
-
-lexer_ltl.l:
-	flex  -Cfr -v --header-file=lex_ltl.yy.h -o lex_ltl.yy.c lexer_ltl.l
-
-parser_ltl.y:
 	bison --language=c -d -g parser_ltl.y
+	gcc -Wall -c parser_ltl.tab.c -O3
