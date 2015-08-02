@@ -8,10 +8,12 @@ Verifies a given input using linear temporal logic formulas.
 
 ####Syntax 
 
-The data file should begin with the LTL formula you want to check your input data against.   
-Below this, give a list of parameter names in the order they appear in each line of input data.     
-Below this, begin listing your input data. Input data is currently limited to 1000 lines and the number of parameters is limited to 20.   
+The first line of the data file must contain the LTL formula you want to check the trace against.   
+Below this, give the list of parameter names in the order they appear in each line of input data.     
+Below this, begin listing your trace data. Trace data is currently limited to 1000 lines and the number of parameters is limited to 20.   
 This can be changed by editing the defines in automata.h
+Comments begin with '#' but the first line MUST be the LTL formula.   
+
 
 State operators:
 
@@ -50,18 +52,19 @@ A B C
 564.5 	233.1 	1.0 
 ```
 
+Example data files can be found in the 'examples' directory.
+
 ####Compiling
 
 Requires flex, bison > 3.0, gcc
 
 Just run `make`
 
-Addition targets:
+Additional targets:
 ```
 clean
 verbose
 debug
-graph
 ```
 
 

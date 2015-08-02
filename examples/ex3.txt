@@ -1,4 +1,5 @@
-G((F LPS) && (G Phagocyte > -1.0) && (F Act-Phag) && (G Damage > -1) && (F Proinflam) && (Phagocyte U AntiInflam))
+G( Damage < 200) && F(AntiInflam) && Phagocyte U Proinflam
+#trace from parameter synthesis test run
 LPS Phagocyte Act-Phag AntiInflam Damage Proinflam
 0.0,73.0,0.0,0.0,0.0,0.0
 0.0,73.0,0.0,0.0,0.0,0.0
@@ -999,3 +1000,4 @@ LPS Phagocyte Act-Phag AntiInflam Damage Proinflam
 8.710954388159683E-28,139.0,172.0,0.23817264568097257,49.805853777321595,89.14747963804504
 8.710954388159683E-28,139.0,172.0,0.23817264568097257,49.805853777321595,89.14747963804504
 7.349014091479732E-28,135.0,176.0,0.24283429135007212,44.65359700363254,93.54663496752973
+
