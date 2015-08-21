@@ -23,30 +23,30 @@ int main(int argc, char* argv[]) {
 	if(argc < 2){
 		fprintf(stderr, "Error: Not enough arguments\n");
 		fprintf(stderr, "Format is: %s input_file\n", argv[0]);
-		return 1;
+		return -1;
 	}
 	FILE* data_file = fopen(argv[1], "r");
 	if( !data_file ){
 		fprintf(stderr, "Error opening input files\n");
-		return 1;
+		return -1;
 	}
 
 	//read first line of formula_file
+	//TODO improve this
 	char linebuffer[BUFFER_SIZE];
 	char* ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
-	while(*ptr != '\0'){
+	while(*ptr++ != '\0'){
 		if(*ptr == '\n'){
 			puts("No formula entered.");
 			return -1;
 		}
 		else if(!isspace(*ptr)) break;
-		ptr++;
 	}
 	printf("LTL Formula: %s\n", linebuffer);
 
-	/* run parser */
+	// run parser 
 	yy_switch_to_buffer(yy_scan_string(linebuffer));
-	if(yyparse() != 0){
+	if(yyparse()){
 		puts("Aborting.");
 		return -1;
 	}
@@ -56,10 +56,12 @@ int main(int argc, char* argv[]) {
 	yy_switch_to_buffer(yy_create_buffer(data_file, YY_BUF_SIZE));
 
 	int sym_table_indices[MAX_PARAMS]; //where each var is in sym table
-	int i, j, num_params, yylex_retval = yylex();
+	int i, j, num_params;
+	int yylex_retval = yylex();
 
-	for(num_params = 0; yylex_retval == IDENTIFIER && num_params < MAX_PARAMS; num_params++){
+	for(num_params = 0; yylex_retval == IDENT && num_params < MAX_PARAMS; num_params++){
 		sym_table_indices[num_params] = sym_lookup(yylval.sval);
+		free(yylval.sval);
 		yylex_retval = yylex();
 	}
 	
@@ -75,7 +77,7 @@ int main(int argc, char* argv[]) {
 
 	printf("Input length:   %-d\n", n_max);
 
-	//finally
+	//finally, run DFS
 	bool DFS_retval = DFS(final_automaton, 0); 
 
 	printf("DFS calls made: %-ld\n\n", DFS_calls_made);

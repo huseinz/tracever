@@ -35,10 +35,10 @@ Automaton* generate_comparator_node(int var_a,
 %type  <node>   automaton;
 
 %token <fval>   REAL
-%token <sval>	IDENTIFIER
-%token <sval>	COMPARATOR
+%token <sval>	IDENT
+%token <sval>	COMP
 
-%right  	IMPLIES 
+%right  	IMP 
 %right		OR
 %right		AND
 %right  	UNTIL  
@@ -67,7 +67,7 @@ ltl_parser:
 
 automaton:
 	
-	IDENTIFIER		{	/* check if identifier is symbol table, add it if it isn't */
+	IDENT		{	/* check if identifier is symbol table, add it if it isn't */
 					if(sym_lookup($1) == 0){
 						#ifdef VERBOSE
 						 printf("Adding %s to symbol table at position %d\n", $1, sym_index);
@@ -80,7 +80,7 @@ automaton:
 					IDENT_node->var = sym_lookup($1);
 					IDENT_node->accepting = true;
 					$$ = IDENT_node;
-					print_status("Created IDENTIFIER node");				
+					print_status("Created IDENT node");				
 					free($1);
 				}
 	| GLOBAL automaton 	{ 	/* generate GLOBAL node */
@@ -122,13 +122,13 @@ automaton:
 					$$ = AND_node;
 					print_status("Created AND automaton node");
 				}
-	| automaton IMPLIES automaton { /* generate IMPLIES node */
-					Automaton* IMPLIES_NOT_node = create_node(NOT_N, $1, NULL);
-					Automaton* IMPLIES_node = create_node(OR_N, IMPLIES_NOT_node, $3);
-					$$ = IMPLIES_node;
-					print_status("Created IMPLIES automaton node");
+	| automaton IMP automaton { /* generate IMP node */
+					Automaton* IMP_NOT_node = create_node(NOT_N, $1, NULL);
+					Automaton* IMP_node = create_node(OR_N, IMP_NOT_node, $3);
+					$$ = IMP_node;
+					print_status("Created IMP automaton node");
 				}
-	| IDENTIFIER COMPARATOR REAL {  /* generate COMPARATOR_N node */
+	| IDENT COMP REAL {  /* generate COMP_N node */
 					
 					/* check if identifier is in symbol table, add it if it isn't */
 					int var_a = sym_lookup($1);
@@ -144,7 +144,7 @@ automaton:
 					free($1);
 					free($2);
 				}
-	| REAL COMPARATOR IDENTIFIER {  /* generate COMPARATOR_N node */
+	| REAL COMP IDENT {  /* generate COMP_N node */
 					
 					/* check if identifier is in symbol table, add it if it isn't */
 					int var_a = sym_lookup($3);
@@ -160,7 +160,7 @@ automaton:
 					free($2);
 					free($3);
 				}
-	| IDENTIFIER COMPARATOR IDENTIFIER {  /* generate COMPARATOR_N node */
+	| IDENT COMP IDENT {  /* generate COMP_N node */
 					
 					/* check if identifier is in symbol table, add it if it isn't */
 					int var_a = sym_lookup($1);
@@ -218,7 +218,7 @@ void print_status(const char* str){
 Automaton* generate_comparator_node(int var_a, const char* comp, int var_b, double val, bool invert){
 
 	
-	Automaton* COMPARE_node = create_node(COMPARATOR_N, NULL, NULL);
+	Automaton* COMPARE_node = create_node(COMP_N, NULL, NULL);
 	COMPARE_node->var = var_a;
 	COMPARE_node->var_b = var_b; 
 	COMPARE_node->comparison_val = val;
@@ -268,10 +268,10 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 		char buf[100];
 		char* ptr = buf;
 
-		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodename_literal(a));
+		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodetype_literal(a));
 		if(a->nodetype == IDENT_N)
 			ptr += sprintf(ptr, "%s ", sym[a->var]);
-		if(a->nodetype == COMPARATOR_N){
+		if(a->nodetype == COMP_N){
 			ptr += sprintf(ptr, "%s ", sym[a->var]);
 			ptr += a->var_b ? sprintf(ptr, "%s ", sym[a->var_b]) : sprintf(ptr, "%.2lf", a->comparison_val);
 		}
@@ -286,10 +286,10 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 			char buf[100];
 			char* ptr = buf;
 
-			ptr += sprintf(ptr, "%d [label=\"%s ", a->left->num, get_nodename_literal(a->left));
+			ptr += sprintf(ptr, "%d [label=\"%s ", a->left->num, get_nodetype_literal(a->left));
 			if(a->left->nodetype == IDENT_N)
 				ptr += sprintf(ptr, "%s ", sym[a->left->var]);
-			if(a->left->nodetype == COMPARATOR_N){
+			if(a->left->nodetype == COMP_N){
 				ptr += sprintf(ptr, "%s ", sym[a->left->var]);
 				ptr += a->left->var_b ? sprintf(ptr, "%s ", sym[a->left->var_b]) : sprintf(ptr, "%.2lf", a->left->comparison_val);
 			}
@@ -312,10 +312,10 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 		char buf[100];
 		char* ptr = buf;
 
-		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodename_literal(a));
+		ptr += sprintf(ptr, "%d [label=\"%s ", a->num, get_nodetype_literal(a));
 		if(a->nodetype == IDENT_N)
 			ptr += sprintf(ptr, "%s ", sym[a->var]);
-		if(a->nodetype == COMPARATOR_N){
+		if(a->nodetype == COMP_N){
 			ptr += sprintf(ptr, "%s ", sym[a->var]);
 			ptr += a->var_b ? sprintf(ptr, "%s ", sym[a->var_b]) : sprintf(ptr, "%.2lf", a->comparison_val);
 		}
@@ -330,10 +330,10 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 			char buf[100];
 			char* ptr = buf;
 
-			ptr += sprintf(ptr, "%d [label=\"%s ", a->right->num, get_nodename_literal(a->right));
+			ptr += sprintf(ptr, "%d [label=\"%s ", a->right->num, get_nodetype_literal(a->right));
 			if(a->right->nodetype == IDENT_N)
 				ptr += sprintf(ptr, "%s ", sym[a->right->var]);
-			if(a->right->nodetype == COMPARATOR_N){
+			if(a->right->nodetype == COMP_N){
 				ptr += sprintf(ptr, "%s ", sym[a->right->var]);
 				ptr += a->right->var_b ? sprintf(ptr, "%s ", sym[a->right->var_b]) : sprintf(ptr, "%.2lf", a->right->comparison_val);
 			}

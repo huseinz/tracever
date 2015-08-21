@@ -17,14 +17,14 @@
 "false"		      	{ yylval.fval = 0; 			return REAL;		}
 [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? { 
 				yylval.fval = strtod(yytext, NULL);	return REAL;	} //TODO safety 
-[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return IDENTIFIER;	}
-"->"		      	{   					return IMPLIES;		}
-"<"		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
-">"		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
-">="		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
-"<="		      	{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
-"=="	 		{ yylval.sval = strdup(yytext); 	return COMPARATOR; 	}
-"!="			{ yylval.sval = strdup(yytext);		return COMPARATOR;	}
+[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return IDENT;	}
+"->"		      	{   					return IMP;		}
+"<"		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
+">"		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
+">="		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
+"<="		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
+"=="	 		{ yylval.sval = strdup(yytext); 	return COMP; 	}
+"!="			{ yylval.sval = strdup(yytext);		return COMP;	}
 "+"			{ }
 "-"			{ }
 "*"			{ }

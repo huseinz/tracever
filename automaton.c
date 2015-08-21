@@ -1,9 +1,10 @@
 #include "automaton.h"
 
 Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
+	
 	Automaton* newnode = malloc(sizeof(Automaton));
 	
-	if( !newnode )
+	if(!newnode)
 		return NULL;
 	
 	newnode->nodetype = nodetype;
@@ -19,9 +20,9 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 }
 
 void delete_automaton(Automaton* a){
-	if( !a )
+	if(!a)
 		return;
-	if( a->nodetype != TRUE_N)
+	if(a->nodetype != TRUE_N)
 		delete_automaton(a->left);
 	delete_automaton(a->right);
 
@@ -29,9 +30,9 @@ void delete_automaton(Automaton* a){
 }
 
 void print_automaton(Automaton* a){
-	if( !a )
+	if(!a)
 		return;
-	puts(get_nodename_literal(a));
+	puts(get_nodetype_literal(a));
 
 	if(a->nodetype != TRUE_N)
 		print_automaton(a->left);
@@ -39,16 +40,16 @@ void print_automaton(Automaton* a){
 }
 
 
-char* get_nodename_literal(Automaton* a){	
+const char* get_nodetype_literal(Automaton* a){	
 	if(!a)
 		return "NULL";
 	switch(a->nodetype){
-		case AND_N: return ("AND"); 
-		case OR_N: return ("OR"); 
-		case TRUE_N: return ("TRUE"); 
-		case IDENT_N: return ("IDENT"); 
-		case NOT_N: return ("NOT");	
-		case COMPARATOR_N: return ("COMPARE"); 
+		case AND_N: return "AND"; 
+		case OR_N: return "OR"; 
+		case TRUE_N: return "TRUE"; 
+		case IDENT_N: return "IDENT"; 
+		case NOT_N: return "NOT";	
+		case COMP_N: return "COMPARE"; 
 		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
 			return "ERROR";
 	}
@@ -73,7 +74,7 @@ bool evaluate_comparator(Automaton* a, int n){
 			return left == right;
 		case NOT_EQUAL:
 			return left != right;
-		default: fprintf(stderr, "!UNKNOWN COMPARATOR VAL %d!", a->comparator);
+		default: fprintf(stderr, "!UNKNOWN COMP VAL %d!", a->comparator);
 			 return false;
 	}	
 }
@@ -81,40 +82,41 @@ bool evaluate_comparator(Automaton* a, int n){
 bool DFS(Automaton* a, int n){
 
 #ifdef YYDEBUG
-        printf("n = %d %s\n", n, get_nodename_literal(a));
+        printf("n = %d %s\n", n, get_nodetype_literal(a));
 #endif
         DFS_calls_made++;
 
-        if( !a )
+        if(!a)
                 return true; 
-        if(a->nodetype == AND_N)
-                return DFS(a->left, n) && DFS(a->right, n);
-        else if(a->nodetype == OR_N)
-                return DFS(a->left, n) || DFS(a->right, n);
-	else if(a->nodetype == NOT_N)
-		return !DFS(a->left, n);
-        else{
-		bool b = false;
-                switch(a->nodetype){
-                        case TRUE_N:            
-				b = true;
-				break;
-                        case IDENT_N:           
-				b = sym_vals[n][a->var];
-				break;
-                        case COMPARATOR_N:      
-				b = evaluate_comparator(a, n);
-				break;
-			default:
-				fprintf(stderr, "DFS Unhandled node: %s\n", 
-					get_nodename_literal(a));
-				break;
-                }
-		if( b )
-			return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1);
-		return false;
+	switch(a->nodetype){
+		// automaton node 'a' truth value at current position
+		bool b;
+
+		case AND_N: return DFS(a->left, n) && DFS(a->right, n);
+        	case OR_N : return DFS(a->left, n) || DFS(a->right, n);
+		case NOT_N: return !DFS(a->left, n);
+        
+		default: 
+			b = false;
+	                switch(a->nodetype){
+        	                case TRUE_N:            
+					b = true;
+					break;
+		                case IDENT_N:           
+					b = sym_vals[n][a->var];
+					break;
+                	        case COMP_N:      
+					b = evaluate_comparator(a, n);
+					break;
+				default:
+					fprintf(stderr, "DFS Unhandled node: %s\n", 
+						get_nodetype_literal(a));
+                	}
+
+			if(b) 
+				return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1);
+			return false;
         }
-        return false;
 }
 
 

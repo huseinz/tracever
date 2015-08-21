@@ -7,8 +7,8 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_INPUT_SIZE 1000
-#define MAX_PARAMS     20	
+#define MAX_INPUT_SIZE 5000
+#define MAX_PARAMS     60	
 
 /* input data table */
 double sym_vals[MAX_INPUT_SIZE][MAX_PARAMS];
@@ -28,13 +28,12 @@ typedef enum {
 	TRUE_N,
 	IDENT_N,
 	NOT_N,
-	COMPARATOR_N,
-	FUTURE_N
+	COMP_N,
 }nodetype_t;
 
 /* comparator types */
 typedef enum{
-	GTR_THAN = COMPARATOR_N + 1,
+	GTR_THAN = COMP_N + 1,
 	LESS_THAN,
 	GTR_OR_EQ,
 	LESS_OR_EQ,
@@ -51,14 +50,14 @@ typedef struct Automaton{
 	//if node is testing a variable, this contains
 	//its index in the symbol table
 	int var;
-	//secondary variable index, used in COMPARATOR_N nodes
+	//secondary variable index, used in COMP_N nodes
 	//for comparing two variables
 	int var_b;   
-	//comparator operator, used in COMPARATOR_N nodes
+	//comparator operator, used in COMP_N nodes
 	comparator_t comparator;
 	//whether this is an accepting state or not 
 	bool accepting;
-	//value to compare against, used in COMPARATOR_N nodes
+	//value to compare against, used in COMP_N nodes
 	//that compare against a constant
 	double     comparison_val;
 	//left child, this is the 'default'
@@ -82,7 +81,7 @@ Automaton* final_automaton;
 *		type of node to be created, defined in enum nodetype_t 
 *	@param var 
 *		location of variable in question. this is usually 0 
-*		for everything except IDENTIFIER_N and COMPARATOR_N
+*		for everything except IDENTIFIER_N and COMP_N
 *	@param left 
 *		pointer to left child 
 *	@param right 
@@ -116,10 +115,10 @@ void print_automaton(Automaton* a);
 bool DFS(Automaton* a, int n);
 
 /**	@brief 	helper function for DFS 
-*		evaluates COMPARATOR_N node value 
+*		evaluates COMP_N node value 
 *	
 *	@param a
-*		COMPARATOR_N node 
+*		COMP_N node 
 *	@param n
 *		trace n to be tested 
 *	@return 
@@ -127,6 +126,14 @@ bool DFS(Automaton* a, int n);
 */
 bool evaluate_comparator(Automaton* a, int n);
 
-char* get_nodename_literal(Automaton* a);
+/** 	@brief returns string containing node's type
+*	
+*	@param a
+*		Automaton
+*
+*	@return 
+*		string containing node's type
+*/
+const char* get_nodetype_literal(Automaton* a);
 
 #endif
