@@ -5,3 +5,6 @@ ltl_parser.dot
 ltl_parser.tab.c
 ltl_parser.tab.h
 tracever
+*.o
+*.tab.*
+*.yy.*
