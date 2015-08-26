@@ -15,11 +15,6 @@ void print_status(const char* str);
 void automaton_to_dot(Automaton* a, const char* fn);
 void automaton_to_dot_aux(Automaton* a, FILE* out);
 
-Automaton* generate_comparator_node(int var_a, 
-				    const char* comp, 
-				    int var_b, 
-				    double val, 
-				    bool invert);
 %}
 
 
@@ -164,7 +159,8 @@ automaton:
 						var_a = sym_index - 1;
 					}
 
-					$$ = generate_comparator_node(var_a, $2, 0, $3, false);
+					$$ = create_comparator_node(var_a, $2, 0, $3, false);
+					print_status("Created COMPARE automaton node");
 					free($1);
 					free($2);
 				}
@@ -180,7 +176,8 @@ automaton:
 						var_a = sym_index - 1;
 					}
 
-					$$ = generate_comparator_node(var_a, $2, 0, $1, true);
+					$$ = create_comparator_node(var_a, $2, 0, $1, true);
+					print_status("Created COMPARE automaton node");
 					free($2);
 					free($3);
 				}
@@ -205,7 +202,8 @@ automaton:
 						var_b = sym_index - 1;
 					}
 
-					$$ = generate_comparator_node(var_a, $2, var_b, 0, false);
+					$$ = create_comparator_node(var_a, $2, var_b, 0, false);
+					print_status("Created COMPARE automaton node");
 					free($1);
 					free($2);
 					free($3);
@@ -239,36 +237,6 @@ void print_status(const char* str){
 #endif
 }
 
-Automaton* generate_comparator_node(int var_a, const char* comp, int var_b, double val, bool invert){
-
-	
-	Automaton* COMPARE_node = create_node(COMP_N, NULL, NULL);
-	COMPARE_node->var = var_a;
-	COMPARE_node->var_b = var_b; 
-	COMPARE_node->comparison_val = val;
-	COMPARE_node->accepting = true;
-	
-	/* parse comparator */
-	comparator_t comparator = EQUAL;
-	
-	if( strcmp(comp, "<") == 0)
-		comparator = invert ? GTR_THAN : LESS_THAN;	
-	else if( strcmp(comp, ">") == 0)
-		comparator = invert ? LESS_THAN : GTR_THAN;	
-	else if( strcmp(comp, "<=") == 0)
-		comparator = invert ? GTR_OR_EQ : LESS_OR_EQ;	
-	else if( strcmp(comp, ">=") == 0)
-		comparator = invert ? LESS_OR_EQ : GTR_OR_EQ;	
-	else if( strcmp(comp, "==") == 0)
-		comparator = EQUAL;	
-	else if( strcmp(comp, "!=") == 0)
-		comparator = NOT_EQUAL;
-	
-	COMPARE_node->comparator = comparator;
-	
-	print_status("Created COMPARE node");
-	return COMPARE_node;
-}
 
 void automaton_to_dot(Automaton* a, const char* fn){
 	

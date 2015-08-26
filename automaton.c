@@ -20,6 +20,36 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	return newnode;
 }
 
+Automaton* create_comparator_node(int var_a, const char* comp, int var_b, double val, bool invert){
+
+	
+	Automaton* COMPARE_node = create_node(COMP_N, NULL, NULL);
+	COMPARE_node->var = var_a;
+	COMPARE_node->var_b = var_b; 
+	COMPARE_node->comparison_val = val;
+	COMPARE_node->accepting = true;
+	
+	/* parse comparator */
+	comparator_t comparator = EQUAL;
+	
+	if( strcmp(comp, "<") == 0)
+		comparator = invert ? GTR_THAN : LESS_THAN;	
+	else if( strcmp(comp, ">") == 0)
+		comparator = invert ? LESS_THAN : GTR_THAN;	
+	else if( strcmp(comp, "<=") == 0)
+		comparator = invert ? GTR_OR_EQ : LESS_OR_EQ;	
+	else if( strcmp(comp, ">=") == 0)
+		comparator = invert ? LESS_OR_EQ : GTR_OR_EQ;	
+	else if( strcmp(comp, "==") == 0)
+		comparator = EQUAL;	
+	else if( strcmp(comp, "!=") == 0)
+		comparator = NOT_EQUAL;
+	
+	COMPARE_node->comparator = comparator;
+	
+	return COMPARE_node;
+}
+
 void delete_automaton(Automaton* a){
 	if(!a)
 		return;

@@ -95,6 +95,26 @@ Automaton* final_automaton;
 */
 Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right);
 
+/**
+*	@brief generates a new comparator node and set relevant fields
+*
+*	@param var_a
+*		index of 'first' variable to be compared 
+*	@param var_b
+*		index of 'second' variable to be compared
+*		set this argument to 0 if comparing a variable to a constant
+*	@param val
+*		constant value to be compared against 
+*		ignored if var_b is nonzero
+*	@param comp
+*		string containing desired comparison operator 
+*	@param invert
+*		inverts the comparison operator
+*		this is to allow commutation when comparing against constant
+*
+*/
+Automaton* create_comparator_node(int var_a, const char* comp, int var_b, double val, bool invert);
+
 /** 	@brief deletes an automaton
 *
 *	@param a pointer to root of automaton 
