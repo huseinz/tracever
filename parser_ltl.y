@@ -2,7 +2,7 @@
 #include "automaton.h"
 
 
-#define SYMBOL_TABLE_SIZE 50
+#define SYMBOL_TABLE_SIZE 200 //arbitrary
 
 extern int yylex();
 
