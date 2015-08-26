@@ -1,4 +1,4 @@
-G(Avg-Temp > 55 && Avg-Temp < 90) && !F( Low < 50 && High > 95 && Inches-Rain > 6)
+G:1000(Avg-Temp > 55 && Avg-Temp < 90) && !F:10( Low < 50 && High > 95 && Inches-Rain > 6)
 #checks whether a monthly forecast trace qualifies as 'good weather'
 Avg-Temp Inches-Rain Chance-Rain High Low
 75.03 0.25 48.12 90.97 68.42
