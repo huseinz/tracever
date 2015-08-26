@@ -1,5 +1,6 @@
 %{
 #include "parser_ltl.tab.h"
+#include <limits.h>
 %}
 
 %option noyywrap
@@ -15,16 +16,19 @@
 "F"		      	{ 					return FUTURE; 		}
 "true"    	      	{ yylval.fval = 1; 			return REAL;	 	}
 "false"		      	{ yylval.fval = 0; 			return REAL;		}
-[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? { 
-				yylval.fval = strtod(yytext, NULL);	return REAL;	} //TODO safety 
-[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return IDENT;	}
+[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? { 	
+								//TODO safety
+								yylval.fval = strtod(yytext, NULL);	
+								return REAL;		} 
+[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return IDENT;		}
+":"			{ 					return *yytext;		}
 "->"		      	{   					return IMP;		}
-"<"		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
-">"		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
-">="		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
-"<="		      	{ yylval.sval = strdup(yytext); 	return COMP; 	}
-"=="	 		{ yylval.sval = strdup(yytext); 	return COMP; 	}
-"!="			{ yylval.sval = strdup(yytext);		return COMP;	}
+"<"		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+">"		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+">="		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"<="		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"=="	 		{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"!="			{ yylval.sval = strdup(yytext);		return COMP;		}
 "+"			{ }
 "-"			{ }
 "*"			{ }

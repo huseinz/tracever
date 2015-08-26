@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 	printf("Input length:   %-d\n", n_max);
 
 	//finally, run DFS
-	bool DFS_retval = DFS(final_automaton, 0); 
+	bool DFS_retval = DFS(final_automaton, 0, INT_MAX); 
 
 	printf("DFS calls made: %-ld\n\n", DFS_calls_made);
 	printf("Automaton returns ");

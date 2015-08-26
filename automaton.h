@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 #define MAX_INPUT_SIZE 5000
 #define MAX_PARAMS     60	
@@ -43,7 +44,8 @@ typedef enum{
 
 /* Automaton node declaration */
 typedef struct Automaton{
-	
+
+	//node's number, used for graph printing	
 	int num;
 	//the node's type
 	nodetype_t nodetype;
@@ -57,6 +59,8 @@ typedef struct Automaton{
 	comparator_t comparator;
 	//whether this is an accepting state or not 
 	bool accepting;
+	//bound for BLTL
+	int bound;
 	//value to compare against, used in COMP_N nodes
 	//that compare against a constant
 	double     comparison_val;
@@ -112,7 +116,7 @@ void print_automaton(Automaton* a);
 *	@return 
 *		boolean indicating if trace is valid 
 */
-bool DFS(Automaton* a, int n);
+bool DFS(Automaton* a, int n, int bound);
 
 /**	@brief 	helper function for DFS 
 *		evaluates COMP_N node value 

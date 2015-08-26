@@ -16,6 +16,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right){
 	newnode->right = right;
 	newnode->accepting = false;
 	newnode->num = num_nodes++;
+	newnode->bound = INT_MAX;
 	return newnode;
 }
 
@@ -79,7 +80,7 @@ bool evaluate_comparator(Automaton* a, int n){
 	}	
 }
 
-bool DFS(Automaton* a, int n){
+bool DFS(Automaton* a, int n, int bound){
 
 #ifdef YYDEBUG
         printf("n = %d %s\n", n, get_nodetype_literal(a));
@@ -88,13 +89,34 @@ bool DFS(Automaton* a, int n){
 
         if(!a)
                 return true; 
+	if(n == bound)
+		return false;
+
 	switch(a->nodetype){
 		// automaton node 'a' truth value at current position
 		bool b;
 
-		case AND_N: return DFS(a->left, n) && DFS(a->right, n);
-        	case OR_N : return DFS(a->left, n) || DFS(a->right, n);
-		case NOT_N: return !DFS(a->left, n);
+		case AND_N: 
+				//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
+				//or if bound != INT_MAX (global bound has been set/is not infinite) 
+				if(a->bound == INT_MAX || bound != INT_MAX)
+					return DFS(a->left, n, bound) && DFS(a->right, n, bound);
+				//if we've reached here, then we're 
+				//either at a BLTL node or the boundary has not been set
+				//in both cases, set the new bound
+				return DFS(a->left, n, n + a->bound) && DFS(a->right, n, n + a->bound); 
+				
+        	case OR_N : 
+				//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
+				//or if bound != INT_MAX (global bound has been set/is not infinite) 
+				if(a->bound == INT_MAX || bound != INT_MAX)
+					return DFS(a->left, n, bound) || DFS(a->right, n, bound);
+				//if we've reached here, then we're 
+				//either at a BLTL node or the boundary has not been set
+				//in both cases, set the new bound
+				return DFS(a->left, n, n + a->bound) || DFS(a->right, n, n + a->bound); 
+
+		case NOT_N: 	return !DFS(a->left, n, bound);
         
 		default: 
 			b = false;
@@ -114,7 +136,7 @@ bool DFS(Automaton* a, int n){
                 	}
 
 			if(b) 
-				return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1);
+				return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1, bound);
 			return false;
         }
 }

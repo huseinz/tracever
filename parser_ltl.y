@@ -41,9 +41,9 @@ Automaton* generate_comparator_node(int var_a,
 %right  	IMP 
 %right		OR
 %right		AND
-%right  	UNTIL  
-%precedence  	GLOBAL 
-%precedence     FUTURE
+%precedence  	UNTIL  
+%token	  	GLOBAL 
+%token   	FUTURE
 %precedence  	NOT
 
 %% 
@@ -83,26 +83,39 @@ automaton:
 					print_status("Created IDENT node");				
 					free($1);
 				}
-	| GLOBAL automaton 	{ 	/* generate GLOBAL node */
+
+	| GLOBAL ':' REAL automaton 	{ 	/* generate GLOBAL node */
+					if($3 < 0)
+						yyerror("Negative number in bound");
+
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $2);
+					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $4);
 					TRUE_node->left = GLOBAL_node;
 					TRUE_node->accepting = true;
+					GLOBAL_node->bound = $3 ? $3 : INT_MAX;
 					$$ = GLOBAL_node;
 					print_status("Created GLOBAL node");
 				}
-	| FUTURE automaton 	{ 	/* generate FUTURE node */
+
+	| FUTURE ':' REAL automaton 	{ 	/* generate FUTURE node */
+					if($3 < 0)
+						yyerror("Negative number in bound");
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $2);
+					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $4);
 					TRUE_node->left = FUTURE_node;
+					FUTURE_node->bound = $3 ? $3 : INT_MAX;
 					$$ = FUTURE_node;
 					print_status("Created FUTURE automaton node");
 				}
-	| automaton UNTIL automaton { /* generate UNTIL node */
+
+	| automaton UNTIL ':' REAL automaton { /* generate UNTIL node */
+					if($4 < 0)
+						yyerror("Negative number in bound");
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
 					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
-					Automaton* UNTIL_node  = create_node(OR_N, $3, UNTILB_node);
+					Automaton* UNTIL_node  = create_node(OR_N, $5, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
+					UNTIL_node->bound = $4 ? $4 : INT_MAX;
 					$$ = UNTIL_node;
 					print_status("Created UNTIL automaton node");
 				}
@@ -112,16 +125,19 @@ automaton:
 					$$ = NOT_node;
 					print_status("Created NOT automaton node");
 				}
+
 	| automaton OR automaton {	/* generate OR_N node */ 
 					Automaton* OR_node = create_node(OR_N, $1, $3);
 					$$ = OR_node;
 					print_status("Created OR automaton node");
 				}
+
 	| automaton AND automaton {	/* generate AND_N node */ 
 					Automaton* AND_node = create_node(AND_N, $1, $3);
 					$$ = AND_node;
 					print_status("Created AND automaton node");
 				}
+
 	| automaton IMP automaton { /* generate IMP node */
 					Automaton* IMP_NOT_node = create_node(NOT_N, $1, NULL);
 					Automaton* IMP_node = create_node(OR_N, IMP_NOT_node, $3);
