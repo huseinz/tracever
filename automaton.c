@@ -89,8 +89,6 @@ bool DFS(Automaton* a, int n, int bound){
 
         if(!a)
                 return true; 
-	if(n == bound)
-		return false;
 
 	switch(a->nodetype){
 		// automaton node 'a' truth value at current position
@@ -136,7 +134,7 @@ bool DFS(Automaton* a, int n, int bound){
                 	}
 
 			if(b) 
-				return n == n_max - 1  ? a->accepting : DFS(a->left, n + 1, bound);
+				return n == n_max - 1 || n + 1 == bound ? a->accepting : DFS(a->left, n + 1, bound);
 			return false;
         }
 }
