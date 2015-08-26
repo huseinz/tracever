@@ -12,7 +12,7 @@
 #define MAX_PARAMS     60	
 
 /* input data table */
-double sym_vals[MAX_INPUT_SIZE][MAX_PARAMS];
+double trace_vals[MAX_INPUT_SIZE][MAX_PARAMS];
 
 /* number of traces */
 int n_max;
@@ -27,7 +27,7 @@ typedef enum {
 	AND_N,
 	OR_N,
 	TRUE_N,
-	IDENT_N,
+	PARAM_N,
 	NOT_N,
 	COMP_N,
 }nodetype_t;
@@ -85,7 +85,7 @@ Automaton* final_automaton;
 *		type of node to be created, defined in enum nodetype_t 
 *	@param var 
 *		location of variable in question. this is usually 0 
-*		for everything except IDENTIFIER_N and COMP_N
+*		for everything except PARAM_N and COMP_N
 *	@param left 
 *		pointer to left child 
 *	@param right 

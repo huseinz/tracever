@@ -78,7 +78,7 @@ const char* get_nodetype_literal(Automaton* a){
 		case AND_N: return "AND"; 
 		case OR_N: return "OR"; 
 		case TRUE_N: return "TRUE"; 
-		case IDENT_N: return "IDENT"; 
+		case PARAM_N: return "PARAM"; 
 		case NOT_N: return "NOT";	
 		case COMP_N: return "COMPARE"; 
 		default: fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype); 
@@ -89,8 +89,8 @@ const char* get_nodetype_literal(Automaton* a){
 //helper function for DFS 
 bool evaluate_comparator(Automaton* a, int n){
 
-	double left = sym_vals[n][a->var];
-	double right = a->var_b ? sym_vals[n][a->var_b] : a->comparison_val; 
+	double left = trace_vals[n][a->var];
+	double right = a->var_b ? trace_vals[n][a->var_b] : a->comparison_val; 
 	
 	switch(a->comparator){
 		case GTR_THAN:
@@ -152,8 +152,8 @@ bool DFS(Automaton* a, int n, int bound){
         	                case TRUE_N:            
 					b = true;
 					break;
-		                case IDENT_N:           
-					b = sym_vals[n][a->var];
+		                case PARAM_N:           
+					b = trace_vals[n][a->var];
 					break;
                 	        case COMP_N:      
 					b = evaluate_comparator(a, n);

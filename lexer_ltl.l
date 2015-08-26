@@ -20,7 +20,7 @@
 								//TODO safety
 								yylval.fval = strtod(yytext, NULL);	
 								return REAL;		} 
-[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return IDENT;		}
+[a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return PARAM;		}
 ":"			{ 					return *yytext;		}
 "->"		      	{   					return IMP;		}
 "<"		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}

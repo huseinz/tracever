@@ -16,7 +16,7 @@ extern void yyless(int n);
 extern YYSTYPE yylval;
 extern int sym_lookup(const char* str);
 extern int sym_index;
-extern char* sym[];
+extern char* sym_table[];
 
 int main(int argc, char* argv[]) {
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	//read first line of formula_file
-	//TODO improve this
+	//TODO improve this (doesn't handle multiple lines)
 	char linebuffer[BUFFER_SIZE];
 	char* ptr = fgets(linebuffer, BUFFER_SIZE, data_file);
 	while(*ptr++ != '\0'){
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	}
 	printf("LTL Formula> %s\n", linebuffer);
 
-	// run parser 
+	//run parser 
 	yy_switch_to_buffer(yy_scan_string(linebuffer));
 	if(yyparse()){
 		puts("Aborting.");
@@ -53,26 +53,33 @@ int main(int argc, char* argv[]) {
 	yypop_buffer_state();
 	
 	//read in input data using flex
+	//WARNING! the file position indicator must be positioned
+	//beyond where the LTL formula is located in the input file
+	//this is currently being done by the code above
+	//Be sure to change this when necessary
 	yy_switch_to_buffer(yy_create_buffer(data_file, YY_BUF_SIZE));
 
-	int sym_table_indices[MAX_PARAMS]; //where each var is in sym table
+	int sym_table_indices[MAX_PARAMS]; //index where param is in sym table
 	int i, j, num_params;
 	int yylex_retval = yylex();
 
-	for(num_params = 0; yylex_retval == IDENT && num_params < MAX_PARAMS; num_params++){
+	//read parameter names, find their index in the symbol table,
+	//and put them in sym_table_indices
+	for(num_params = 0; yylex_retval == PARAM && num_params < MAX_PARAMS; num_params++){
 		sym_table_indices[num_params] = sym_lookup(yylval.sval);
 		free(yylval.sval);
 		yylex_retval = yylex();
 	}
 	
+	//read trace values and put it into the trace table
 	for(i = 0; yylex_retval && i < MAX_INPUT_SIZE; i++){
 		for(j = 0; j < num_params && yylex_retval == REAL; j++){
-			sym_vals[i][sym_table_indices[j]] = yylval.fval;
+			trace_vals[i][sym_table_indices[j]] = yylval.fval;
 			yylex_retval = yylex();
 		}
 	}
 
-	//important, set nmax to number of positions
+	//set n_max to number of positions
 	n_max = i;
 
 	printf("Input length:   %-d\n", n_max);
@@ -88,7 +95,7 @@ int main(int argc, char* argv[]) {
 	delete_automaton(final_automaton);
 	
 	for(i = 1; i < sym_index; i++)
-		free(sym[i]);
+		free(sym_table[i]);
 
 	fclose(data_file);
 	yypop_buffer_state();
