@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if(!isspace(*ptr)) break;
 	}
-	printf("LTL Formula: %s\n", linebuffer);
+	printf("LTL Formula> %s\n", linebuffer);
 
 	// run parser 
 	yy_switch_to_buffer(yy_scan_string(linebuffer));

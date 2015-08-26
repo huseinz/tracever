@@ -85,8 +85,10 @@ automaton:
 				}
 
 	| GLOBAL ':' REAL automaton 	{ 	/* generate GLOBAL node */
-					if($3 < 0)
+					if($3 < 0){
 						yyerror("Negative number in bound");
+						YYABORT;
+					}
 
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
 					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $4);
@@ -98,8 +100,11 @@ automaton:
 				}
 
 	| FUTURE ':' REAL automaton 	{ 	/* generate FUTURE node */
-					if($3 < 0)
+					if($3 < 0){
 						yyerror("Negative number in bound");
+						YYABORT;
+					}
+
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
 					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $4);
 					TRUE_node->left = FUTURE_node;
@@ -109,8 +114,11 @@ automaton:
 				}
 
 	| automaton UNTIL ':' REAL automaton { /* generate UNTIL node */
-					if($4 < 0)
+					if($4 < 0){
 						yyerror("Negative number in bound");
+						YYABORT;
+					}
+
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
 					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
 					Automaton* UNTIL_node  = create_node(OR_N, $5, UNTILB_node);
