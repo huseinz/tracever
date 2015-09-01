@@ -124,8 +124,7 @@ bool DFS(Automaton* a, int n, int bound){
 		// automaton node 'a' truth value at current position
 		bool b;
 
-		case AND_N: 
-				//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
+		case AND_N: 	//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
 				//or if bound != INT_MAX (global bound has been set/is not infinite) 
 				if(a->bound == INT_MAX || bound != INT_MAX)
 					return DFS(a->left, n, bound) && DFS(a->right, n, bound);
@@ -134,8 +133,7 @@ bool DFS(Automaton* a, int n, int bound){
 				//in both cases, set the new bound
 				return DFS(a->left, n, n + a->bound) && DFS(a->right, n, n + a->bound); 
 				
-        	case OR_N : 
-				//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
+        	case OR_N :	//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
 				//or if bound != INT_MAX (global bound has been set/is not infinite) 
 				if(a->bound == INT_MAX || bound != INT_MAX)
 					return DFS(a->left, n, bound) || DFS(a->right, n, bound);
@@ -159,12 +157,16 @@ bool DFS(Automaton* a, int n, int bound){
 					b = evaluate_comparator(a, n);
 					break;
 				default:
-					fprintf(stderr, "DFS Unhandled node: %s\n", 
-						get_nodetype_literal(a));
+					fprintf(stderr, "DFS Unhandled node: %s\n", get_nodetype_literal(a));
                 	}
 
-			if(b) 
-				return n == n_max - 1 || n + 1 == bound ? a->accepting : DFS(a->left, n + 1, bound);
+			if(b){ 
+				if(n == n_max - 1 || n + 1 == bound)
+					return a->accepting;
+
+				return DFS(a->left, n + 1, bound);
+			}
+
 			return false;
         }
 }
