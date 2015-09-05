@@ -8,3 +8,4 @@ tracever
 *.o
 *.tab.*
 *.yy.*
+*dot
