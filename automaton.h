@@ -27,20 +27,26 @@ typedef enum {
 	AND_N,
 	OR_N,
 	TRUE_N,
-	PARAM_N,
 	NOT_N,
+	PARAM_N,
 	COMP_N,
+	CONST_N,
+	ARITH_N
 }nodetype_t;
 
-/* comparator types */
+/* operator types */
 typedef enum{
-	GTR_THAN = COMP_N + 1,
+	GTR_THAN = ARITH_N + 1,
 	LESS_THAN,
 	GTR_OR_EQ,
 	LESS_OR_EQ,
 	EQUAL,
-	NOT_EQUAL
-}comparator_t;
+	NOT_EQUAL,
+	ADD,
+	SUB,
+	MUL,
+	DIV
+}operator_t;
 
 /* Automaton node declaration */
 typedef struct Automaton{
@@ -52,18 +58,16 @@ typedef struct Automaton{
 	//if node is testing a variable, this contains
 	//its index in the symbol table
 	int var;
-	//secondary variable index, used in COMP_N nodes
-	//for comparing two variables
-	int var_b;   
-	//comparator operator, used in COMP_N nodes
-	comparator_t comparator;
+	//secondary variable index, used in ARITH_N nodes
+	//int var_b;   
+	//comparator operator, used in COMP_N and ARITH_N nodes
+	operator_t operator;
 	//whether this is an accepting state or not 
 	bool accepting;
 	//bound for BLTL
 	int bound;
 	//value to compare against, used in COMP_N nodes
 	//that compare against a constant
-	double     comparison_val;
 	//left child, this is the 'default'
 	struct Automaton* left;
 	//right child
@@ -113,7 +117,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right);
 *		this is to allow commutation when comparing against constant
 *
 */
-Automaton* create_comparator_node(int var_a, const char* comp, int var_b, double val, bool invert);
+Automaton* create_comparator_node(const char* comp, Automaton* left, Automaton* right);
 
 /** 	@brief deletes an automaton
 *
@@ -149,6 +153,7 @@ bool DFS(Automaton* a, int n, int bound);
 *		comparator bool 
 */
 bool evaluate_comparator(Automaton* a, int n);
+double evaluate_arithmetic(Automaton* a, int n);
 
 /** 	@brief returns string containing node's type
 *	

@@ -147,26 +147,65 @@ automaton:
 					$$ = IMP_node;
 					print_status("Created IMP automaton node");
 				}
-	| PARAM COMP REAL {  /* generate COMP_N node */
+	| term COMP term	{
+				
+				}
+	| '(' automaton ')'  	{ 	/* parentheses */
+					$$ = $2; 
+				}
+	;
+
+term:
+	PARAM		{	/* check if identifier is symbol table, add it if it isn't */
+					if(sym_lookup($1) == 0){
+						#ifdef VERBOSE
+						 printf("Adding %s to symbol table at position %d\n", $1, sym_index);
+						#endif
+						sym_table[ sym_index++ ] = strdup($1);
+					}
 					
-					/* check if identifier is in symbol table, add it if it isn't */
-					int var_a = sym_lookup($1);
-					if( var_a == 0){
+					/* generate PARAM_N node */
+					Automaton* PARAM_node = create_node(PARAM_N, NULL, NULL);
+					PARAM_node->var = sym_lookup($1);
+					PARAM_node->accepting = true;
+					$$ = PARAM_node;
+					print_status("Created PARAM node");				
+					free($1);
+				}
+	| REAL		{
+	
+			}
+	| term '+' term {}
+	| term '-' term {}
+	| term '*' term {}
+	| term '/' term {}
+	;
+
+
+/*
+	| PARAM COMP REAL { 
+					
+					int var = sym_lookup($1);
+					if( var == 0){
 						#ifdef VERBOSE
 						printf("Adding %s to symbol table at position %d\n", $1, sym_index);
 						#endif
 						sym_table[ sym_index++ ] = strdup($1);
-						var_a = sym_index - 1;
+						var = sym_index - 1;
 					}
+					
+					Automaton* PARAM_node = create_node(PARAM_N, NULL, NULL);
+					PARAM_node->var = var;
+
+					Automaton* REAL_node = create_node(CONST_N, NULL, NULL);
 
 					$$ = create_comparator_node(var_a, $2, 0, $3, false);
 					print_status("Created COMPARE automaton node");
 					free($1);
 					free($2);
 				}
-	| REAL COMP PARAM {  /* generate COMP_N node */
+	| REAL COMP PARAM { 
 					
-					/* check if identifier is in symbol table, add it if it isn't */
 					int var_a = sym_lookup($3);
 					if( var_a == 0){
 						#ifdef VERBOSE
@@ -181,9 +220,8 @@ automaton:
 					free($2);
 					free($3);
 				}
-	| PARAM COMP PARAM {  /* generate COMP_N node */
+	| PARAM COMP PARAM { 
 					
-					/* check if identifier is in symbol table, add it if it isn't */
 					int var_a = sym_lookup($1);
 					if( var_a == 0){
 						#ifdef VERBOSE
@@ -208,10 +246,7 @@ automaton:
 					free($2);
 					free($3);
 				}
-	| '(' automaton ')'  	{ 	/* parentheses */
-					$$ = $2; 
-				}
-	;
+*/	
 
 %%
 
