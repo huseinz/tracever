@@ -28,6 +28,7 @@ void automaton_to_dot_aux(Automaton* a, FILE* out);
 %destructor { free ($$); } <sval>
 
 %type  <node>   automaton;
+%type  <node>	term;
 
 %token <fval>   REAL
 %token <sval>	PARAM
@@ -148,7 +149,8 @@ automaton:
 					print_status("Created IMP automaton node");
 				}
 	| term COMP term	{
-				
+					Automaton* COMP_node = create_operator_node($2, $1, $2);
+					$$ = COMP_node;			
 				}
 	| '(' automaton ')'  	{ 	/* parentheses */
 					$$ = $2; 
@@ -173,12 +175,28 @@ term:
 					free($1);
 				}
 	| REAL		{
-	
+					Automaton* CONST_node = create_node(CONST_N, NULL, NULL);
+
+					CONST_node->constant = $1;
+
+					$$ = CONST_node;
 			}
-	| term '+' term {}
-	| term '-' term {}
-	| term '*' term {}
-	| term '/' term {}
+	| term '+' term {
+					Automaton* ARITH_node = create_operator_node($2, $1, $2);
+					$$ = ARITH_node;
+			}
+	| term '-' term {
+					Automaton* ARITH_node = create_operator_node($2, $1, $2);
+					$$ = ARITH_node;
+			}
+	| term '*' term {
+					Automaton* ARITH_node = create_operator_node($2, $1, $2);
+					$$ = ARITH_node;
+			}
+	| term '/' term {
+					Automaton* ARITH_node = create_operator_node($2, $1, $2);
+					$$ = ARITH_node;
+			}
 	;
 
 

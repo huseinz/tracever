@@ -31,12 +31,12 @@ typedef enum {
 	PARAM_N,
 	COMP_N,
 	CONST_N,
-	ARITH_N
+	OPER_N
 }nodetype_t;
 
 /* operator types */
 typedef enum{
-	GTR_THAN = ARITH_N + 1,
+	GTR_THAN = OPER_N + 1,
 	LESS_THAN,
 	GTR_OR_EQ,
 	LESS_OR_EQ,
@@ -117,7 +117,7 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right);
 *		this is to allow commutation when comparing against constant
 *
 */
-Automaton* create_comparator_node(const char* comp, Automaton* left, Automaton* right);
+Automaton* create_operator_node(const char* comp, Automaton* left, Automaton* right);
 
 /** 	@brief deletes an automaton
 *
@@ -152,8 +152,7 @@ bool DFS(Automaton* a, int n, int bound);
 *	@return 
 *		comparator bool 
 */
-bool evaluate_comparator(Automaton* a, int n);
-double evaluate_arithmetic(Automaton* a, int n);
+bool evaluate_operator(Automaton* a, int n);
 
 /** 	@brief returns string containing node's type
 *	

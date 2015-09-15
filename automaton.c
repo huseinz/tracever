@@ -20,34 +20,39 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right) {
 	return newnode;
 }
 
-Automaton* create_comparator_node(const char* comp, Automaton* left, Automaton* right) {
+Automaton* create_operator_node(const char* op, Automaton* left, Automaton* right) {
 
-
-	Automaton* COMPARE_node = create_node(COMP_N, left, right);
-//	COMPARE_node->var = var_a;
-//	COMPARE_node->var_b = var_b;
-//	COMPARE_node->comparison_val = val;
-	COMPARE_node->accepting = true;
+	
+	Automaton* OP_node = create_node(OPER_N, left, right);
+	OP_node->accepting = true;
 
 	/* parse comparator */
-	operator_t comparator = EQUAL;
+	operator_t oper = EQUAL;
 
-	if( strcmp(comp, "<") == 0)
-		comparator = LESS_THAN;
-	else if( strcmp(comp, ">") == 0)
-		comparator = GTR_THAN;
-	else if( strcmp(comp, "<=") == 0)
-		comparator = LESS_OR_EQ;
-	else if( strcmp(comp, ">=") == 0)
-		comparator = GTR_OR_EQ;
-	else if( strcmp(comp, "==") == 0)
-		comparator = EQUAL;
-	else if( strcmp(comp, "!=") == 0)
-		comparator = NOT_EQUAL;
+	if( strcmp(op, "<") == 0)
+		oper = LESS_THAN;
+	else if( strcmp(op, ">") == 0)
+		oper = GTR_THAN;
+	else if( strcmp(op, "<=") == 0)
+		oper = LESS_OR_EQ;
+	else if( strcmp(op, ">=") == 0)
+		oper = GTR_OR_EQ;
+	else if( strcmp(op, "==") == 0)
+		oper = EQUAL;
+	else if( strcmp(op, "!=") == 0)
+		oper = NOT_EQUAL;
+	else if( strcmp(op, "+") == 0)
+		oper = ADD; 
+	else if( strcmp(op, "-") == 0)
+		oper = SUB; 
+	else if( strcmp(op, "*") == 0)
+		oper = MUL; 
+	else if( strcmp(op, "/") == 0)
+		oper = DIV; 
 
-	COMPARE_node->operator = comparator;
+	OP_node->operator = oper;
 
-	return COMPARE_node;
+	return OP_node;
 }
 
 void delete_automaton(Automaton* a) {
