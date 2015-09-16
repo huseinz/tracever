@@ -1,7 +1,7 @@
 all: 	parser_ltl.tab.o lex_ltl.yy.o tracever.o automaton.o 	
 	gcc -Wall -o tracever *.o -O3  
 debug:
-	bison --language=c -W -v -t -d parser_ltl.y
+	bison --language=c -W -v -t -d -f parser_ltl.y
 	flex  -Cem -p -v --header-file=lex_ltl.yy.h -o lex_ltl.yy.c lexer_ltl.l
 	gcc -g -o tracever *.c -DYYDEBUG -DVERBOSE
 verbose:

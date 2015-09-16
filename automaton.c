@@ -9,7 +9,6 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right) {
 
 	newnode->nodetype = nodetype;
 	newnode->var = 0;
-//	newnode->var_b = 0;
 	newnode->operator = 0;
 	newnode->constant = 0;
 	newnode->left = left;
@@ -90,12 +89,10 @@ const char* get_nodetype_literal(Automaton* a) {
 		return "PARAM";
 	case NOT_N:
 		return "NOT";
-	case COMP_N:
-		return "COMPARE";
+	case OPER_N:
+		return "OP";
 	case CONST_N:
 		return "CONSTANT";
-	case ARITH_N:
-		return "ARITH";
 	default:
 		fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype);
 		return "ERROR";
@@ -103,10 +100,14 @@ const char* get_nodetype_literal(Automaton* a) {
 }
 
 //helper function for DFS
-bool evaluate_comparator(Automaton* a, int n) {
+double evaluate_operator(Automaton* a, int n) {
 
 	double left, right;
 	
+	if(!a->left || !a->right){
+		fprintf(stderr, "COMP node has null child!\n");
+		return false;
+	}
 	switch(a->left->nodetype){
 		case PARAM_N:
 			left = trace_vals[n][a->left->var];
@@ -114,10 +115,11 @@ bool evaluate_comparator(Automaton* a, int n) {
 		case CONST_N:
 			left = a->left->constant;
 			break;
-		case ARITH_N:
-			left = evaluate_arithmetic(a->left, n);
-		case NULL:
-			fprintf(stderr, "Comparator node has NULL child!");
+		case OPER_N:
+			left = evaluate_operator(a->left, n);
+			break;
+		default:
+			fprintf(stderr, "Left COMP node child has improper type %s\n", get_nodetype_literal(a->left));
 			return false;
 	}
 	switch(a->right->nodetype){
@@ -127,15 +129,16 @@ bool evaluate_comparator(Automaton* a, int n) {
 		case CONST_N:
 			right = a->right->constant;
 			break;
-		case ARITH_N:
-			right = evaluate_arithmetic(a->right, n);
-		case NULL:
-			fprintf(stderr, "Comparator node has NULL child!");
+		case OPER_N:
+			right = evaluate_operator(a->right, n);
+			break;
+		default:
+			fprintf(stderr, "Left COMP node child has improper type %s\n", get_nodetype_literal(a->right));
 			return false;
 	}
 
 
-	switch(a->comparator) {
+	switch(a->operator) {
 		case GTR_THAN:
 			return left > right;
 		case LESS_THAN:
@@ -148,8 +151,20 @@ bool evaluate_comparator(Automaton* a, int n) {
 			return left == right;
 		case NOT_EQUAL:
 			return left != right;
+		case ADD:
+			return left + right;
+		case SUB:
+			return left - right;
+		case MUL:
+			return left * right;
+		case DIV:
+			if(!right){
+				fprintf(stderr, "Division by zero!\n");
+				return false;
+			}
+			return left / right;
 		default:
-			fprintf(stderr, "!UNKNOWN COMP VAL %d!", a->comparator);
+			fprintf(stderr, "!UNKNOWN OP VAL %d!", a->operator);
 			return false;
 	}
 }
@@ -197,8 +212,8 @@ bool DFS(Automaton* a, int n, int bound) {
 	case PARAM_N:
 		return trace_vals[n][a->var];
 
-	case COMP_N:
-		return evaluate_comparator(a, n);
+	case OPER_N:
+		return evaluate_operator(a, n);
 
 	default:
 		fprintf(stderr, "DFS Unhandled node: %s\n", get_nodetype_literal(a));

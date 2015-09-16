@@ -27,12 +27,12 @@ void automaton_to_dot_aux(Automaton* a, FILE* out);
 
 %destructor { free ($$); } <sval>
 
-%type  <node>   automaton;
-%type  <node>	term;
+%type  <node>   automaton
+%type  <node>	term
 
 %token <fval>   REAL
 %token <sval>	PARAM
-%token <sval>	COMP
+%token <sval>	OPER
 
 %right  	IMP 
 %right		OR
@@ -62,25 +62,8 @@ ltl_parser:
 	;
 
 automaton:
-	
-	PARAM		{	/* check if identifier is symbol table, add it if it isn't */
-					if(sym_lookup($1) == 0){
-						#ifdef VERBOSE
-						 printf("Adding %s to symbol table at position %d\n", $1, sym_index);
-						#endif
-						sym_table[ sym_index++ ] = strdup($1);
-					}
-					
-					/* generate PARAM_N node */
-					Automaton* PARAM_node = create_node(PARAM_N, NULL, NULL);
-					PARAM_node->var = sym_lookup($1);
-					PARAM_node->accepting = true;
-					$$ = PARAM_node;
-					print_status("Created PARAM node");				
-					free($1);
-				}
 
-	| GLOBAL ':' REAL automaton 	{ 	/* generate GLOBAL node */
+	GLOBAL ':' REAL automaton 	{ 	/* generate GLOBAL node */
 					if($3 < 0){
 						yyerror("Negative number in bound");
 						YYABORT;
@@ -148,9 +131,8 @@ automaton:
 					$$ = IMP_node;
 					print_status("Created IMP automaton node");
 				}
-	| term COMP term	{
-					Automaton* COMP_node = create_operator_node($2, $1, $2);
-					$$ = COMP_node;			
+	| term			{
+					$$ = $1;			
 				}
 	| '(' automaton ')'  	{ 	/* parentheses */
 					$$ = $2; 
@@ -158,7 +140,7 @@ automaton:
 	;
 
 term:
-	PARAM		{	/* check if identifier is symbol table, add it if it isn't */
+	PARAM		{		/* check if identifier is symbol table, add it if it isn't */
 					if(sym_lookup($1) == 0){
 						#ifdef VERBOSE
 						 printf("Adding %s to symbol table at position %d\n", $1, sym_index);
@@ -181,21 +163,13 @@ term:
 
 					$$ = CONST_node;
 			}
-	| term '+' term {
-					Automaton* ARITH_node = create_operator_node($2, $1, $2);
-					$$ = ARITH_node;
+	| term OPER term {
+					Automaton* OPER_node = create_operator_node($2, $1, $3);
+					$$ = OPER_node;
+					free($2);
 			}
-	| term '-' term {
-					Automaton* ARITH_node = create_operator_node($2, $1, $2);
-					$$ = ARITH_node;
-			}
-	| term '*' term {
-					Automaton* ARITH_node = create_operator_node($2, $1, $2);
-					$$ = ARITH_node;
-			}
-	| term '/' term {
-					Automaton* ARITH_node = create_operator_node($2, $1, $2);
-					$$ = ARITH_node;
+	| '(' term ')'  {
+					$$ = $2;
 			}
 	;
 
@@ -304,7 +278,7 @@ void automaton_to_dot(Automaton* a, const char* fn){
 
 void automaton_to_dot_aux(Automaton* a, FILE* out){
 
-	if(a->left){
+/*	if(a->left){
 		
 		//arrow
 		fprintf(out, "%d -> %d;\n", a->num, a->left->num);
@@ -391,6 +365,6 @@ void automaton_to_dot_aux(Automaton* a, FILE* out){
 			//recurse
 			automaton_to_dot_aux(a->right, out);
 		}
-	}
+	}*/
 }
 

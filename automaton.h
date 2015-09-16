@@ -66,7 +66,8 @@ typedef struct Automaton{
 	bool accepting;
 	//bound for BLTL
 	int bound;
-	//value to compare against, used in COMP_N nodes
+	//value to compare against, used in COMP_N and ARITH_N nodes
+	int constant;
 	//that compare against a constant
 	//left child, this is the 'default'
 	struct Automaton* left;
@@ -152,7 +153,7 @@ bool DFS(Automaton* a, int n, int bound);
 *	@return 
 *		comparator bool 
 */
-bool evaluate_operator(Automaton* a, int n);
+double evaluate_operator(Automaton* a, int n);
 
 /** 	@brief returns string containing node's type
 *	
