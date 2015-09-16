@@ -21,81 +21,75 @@ Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right) {
 
 Automaton* create_operator_node(const char* op, Automaton* left, Automaton* right) {
 
+	char* operators[] = { ">",  "<", ">=", "<=", "==",
+        	              "!=", "+", "-",  "*",  "/"};
 	
+	int i;
 	Automaton* OP_node = create_node(OPER_N, left, right);
 	OP_node->accepting = true;
 
-	/* parse comparator */
-	operator_t oper = EQUAL;
+	for(i = 0; i < sizeof(operators) / sizeof (char*); i++){
+		if(strcmp(op, operators[i]) == 0){
+			OP_node->operator = i;
+			return OP_node;
+		}
+	}
 
-	if( strcmp(op, "<") == 0)
-		oper = LESS_THAN;
-	else if( strcmp(op, ">") == 0)
-		oper = GTR_THAN;
-	else if( strcmp(op, "<=") == 0)
-		oper = LESS_OR_EQ;
-	else if( strcmp(op, ">=") == 0)
-		oper = GTR_OR_EQ;
-	else if( strcmp(op, "==") == 0)
-		oper = EQUAL;
-	else if( strcmp(op, "!=") == 0)
-		oper = NOT_EQUAL;
-	else if( strcmp(op, "+") == 0)
-		oper = ADD; 
-	else if( strcmp(op, "-") == 0)
-		oper = SUB; 
-	else if( strcmp(op, "*") == 0)
-		oper = MUL; 
-	else if( strcmp(op, "/") == 0)
-		oper = DIV; 
+	fprintf(stderr, "Unrecognized operator %s\n", op);
 
-	OP_node->operator = oper;
-
-	return OP_node;
+	return NULL;
 }
 
 void delete_automaton(Automaton* a) {
+
 	if(!a)
 		return;
+
 	if(a->nodetype != TRUE_N)
 		delete_automaton(a->left);
+
 	delete_automaton(a->right);
 
 	free(a);
 }
 
 void print_automaton(Automaton* a) {
+
 	if(!a)
 		return;
+
 	puts(get_nodetype_literal(a));
 
 	if(a->nodetype != TRUE_N)
 		print_automaton(a->left);
+
 	print_automaton(a->right);
 }
 
 
 const char* get_nodetype_literal(Automaton* a) {
+
 	if(!a)
 		return "NULL";
+
 	switch(a->nodetype) {
-	case AND_N:
-		return "AND";
-	case OR_N:
-		return "OR";
-	case TRUE_N:
-		return "TRUE";
-	case PARAM_N:
-		return "PARAM";
-	case NOT_N:
-		return "NOT";
-	case OPER_N:
-		return "OP";
-	case CONST_N:
-		return "CONSTANT";
-	default:
-		fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype);
-		return "ERROR";
+		case AND_N:
+			return "AND";
+		case OR_N:
+			return "OR";
+		case TRUE_N:
+			return "TRUE";
+		case PARAM_N:
+			return "PARAM";
+		case NOT_N:
+			return "NOT";
+		case OPER_N:
+			return "OP";
+		case CONST_N:
+			return "CONSTANT";
+		default:
+			fprintf(stderr, "!UNKNOWN NODE '%d'!\n", a->nodetype);
+			return "ERROR";
 	}
 }
 
@@ -171,53 +165,46 @@ double evaluate_operator(Automaton* a, int n) {
 
 bool DFS(Automaton* a, int n, int bound) {
 
-#ifdef YYDEBUG
-	printf("n = %d %s\n", n, get_nodetype_literal(a));
-#endif
 	DFS_calls_made++;
 
 	if(!a)
 		return true;
 
 	switch(a->nodetype) {
-	// automaton node 'a' truth value at current position
 
-	case AND_N: 	//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
-		//or if bound != INT_MAX (global bound has been set/is not infinite)
-		if(a->bound == INT_MAX || bound != INT_MAX)
-			return DFS(a->left, n, bound) && DFS(a->right, n, bound);
-		//if we've reached here, then we're
-		//either at a BLTL node or the boundary has not been set
-		//in both cases, set the new bound
-		return DFS(a->left, n, n + a->bound) && DFS(a->right, n, n + a->bound);
+		case AND_N: 	
+			//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
+			//or if bound != INT_MAX (global bound has been set/is not infinite)
+			if(a->bound == INT_MAX || bound != INT_MAX)
+				return DFS(a->left, n, bound) && DFS(a->right, n, bound);
+			//if we've reached here, then we're
+			//either at a BLTL node or the boundary has not been set
+			//in both cases, set the new bound
+			return DFS(a->left, n, n + a->bound) && DFS(a->right, n, n + a->bound);
 
-	case OR_N :	//check if a->bound == INT_MAX (i.e. the current node's bound is unset/infinite)
-		//or if bound != INT_MAX (global bound has been set/is not infinite)
-		if(a->bound == INT_MAX || bound != INT_MAX)
-			return DFS(a->left, n, bound) || DFS(a->right, n, bound);
-		//if we've reached here, then we're
-		//either at a BLTL node or the boundary has not been set
-		//in both cases, set the new bound
-		return DFS(a->left, n, n + a->bound) || DFS(a->right, n, n + a->bound);
+		case OR_N :
+			if(a->bound == INT_MAX || bound != INT_MAX)
+				return DFS(a->left, n, bound) || DFS(a->right, n, bound);
+			return DFS(a->left, n, n + a->bound) || DFS(a->right, n, n + a->bound);
 
-	case NOT_N:
-		return !DFS(a->left, n, bound);
+		case NOT_N:
+			return !DFS(a->left, n, bound);
 
-	case TRUE_N:
-		if(n == n_max - 1 || n + 1 == bound)
-			return a->accepting;
+		case TRUE_N:
+			if(n == n_max - 1 || n + 1 == bound)
+				return a->accepting;
+	
+			return DFS(a->left, n + 1, bound);
 
-		return DFS(a->left, n + 1, bound);
+		case PARAM_N:
+			return trace_vals[n][a->var];
+	
+		case OPER_N:
+			return evaluate_operator(a, n);
 
-	case PARAM_N:
-		return trace_vals[n][a->var];
-
-	case OPER_N:
-		return evaluate_operator(a, n);
-
-	default:
-		fprintf(stderr, "DFS Unhandled node: %s\n", get_nodetype_literal(a));
-		return false;
+		default:
+			fprintf(stderr, "DFS Unhandled node: %s\n", get_nodetype_literal(a));
+			return false;
 	}
 }
 

@@ -20,23 +20,12 @@ int n_max;
 /* DFS call counter */
 long DFS_calls_made;
 
+/* total number of nodes */
 int num_nodes;
-
-/* node types */
-typedef enum {
-	AND_N,
-	OR_N,
-	TRUE_N,
-	NOT_N,
-	PARAM_N,
-	COMP_N,
-	CONST_N,
-	OPER_N
-}nodetype_t;
 
 /* operator types */
 typedef enum{
-	GTR_THAN = OPER_N + 1,
+	GTR_THAN,
 	LESS_THAN,
 	GTR_OR_EQ,
 	LESS_OR_EQ,
@@ -48,6 +37,17 @@ typedef enum{
 	DIV
 }operator_t;
 
+/* node types */
+typedef enum {
+	AND_N = DIV + 1,
+	OR_N,
+	TRUE_N,
+	NOT_N,
+	PARAM_N,
+	CONST_N,
+	OPER_N
+}nodetype_t;
+
 /* Automaton node declaration */
 typedef struct Automaton{
 
@@ -58,18 +58,15 @@ typedef struct Automaton{
 	//if node is testing a variable, this contains
 	//its index in the symbol table
 	int var;
-	//secondary variable index, used in ARITH_N nodes
-	//int var_b;   
-	//comparator operator, used in COMP_N and ARITH_N nodes
+	//comparator operator, used in OPER_N nodes
 	operator_t operator;
 	//whether this is an accepting state or not 
 	bool accepting;
 	//bound for BLTL
 	int bound;
-	//value to compare against, used in COMP_N and ARITH_N nodes
+	//value to compare against, used in CONST_N nodes
 	int constant;
-	//that compare against a constant
-	//left child, this is the 'default'
+	//left child
 	struct Automaton* left;
 	//right child
 	struct Automaton* right;
@@ -101,24 +98,20 @@ Automaton* final_automaton;
 Automaton* create_node(nodetype_t nodetype, Automaton* left, Automaton* right);
 
 /**
-*	@brief generates a new comparator node and set relevant fields
+*	@brief generates a new operator node and set relevant fields
 *
-*	@param var_a
-*		index of 'first' variable to be compared 
-*	@param var_b
-*		index of 'second' variable to be compared
-*		set this argument to 0 if comparing a variable to a constant
-*	@param val
-*		constant value to be compared against 
-*		ignored if var_b is nonzero
 *	@param comp
 *		string containing desired comparison operator 
-*	@param invert
-*		inverts the comparison operator
-*		this is to allow commutation when comparing against constant
+*	@param left
+*		left operand
+*	@param right
+*		right operand
+*	
+*	@return 
+*		pointer to new node
 *
 */
-Automaton* create_operator_node(const char* comp, Automaton* left, Automaton* right);
+Automaton* create_operator_node(const char* op, Automaton* left, Automaton* right);
 
 /** 	@brief deletes an automaton
 *

@@ -1,6 +1,6 @@
 ##paramsynth trace verifier
 
-Verifies a given input using linear temporal logic formulas.
+Verifies a given input using bounded linear temporal logic formulas.
 
 ####Synopsis
 
@@ -8,11 +8,11 @@ Verifies a given input using linear temporal logic formulas.
 
 ####Syntax 
 
-The first line of the data file must contain the LTL formula you want to check the trace against.   
+The first line of the data file must contain the BLTL formula you want to check the trace against.   
 Below this, give the list of parameter names in the order they appear in each line of input data.     
-Below this, begin listing your trace data. Trace data is currently limited to 1000 lines and the number of parameters is limited to 20.   
+Below this, begin listing your trace data. Trace data is currently limited to 5000 lines and the number of parameters is limited to 60.   
 This can be changed by editing the defines in automata.h    
-Comments begin with '#' but the first line MUST be the LTL formula.   
+You can add comments to the data file with '#' but the first line MUST be the LTL formula.   
 
 
 State operators:
@@ -24,23 +24,29 @@ State operators:
 
 Unary LTL operators:
 
-`G`     : **G**lobally    
-`F`     : **F**uture    
+`G:N`     : **G**lobally    
+`F:N`     : **F**uture    
 
 Binary LTL operators:
 
-`U`     : **U**ntil     
+`U:N`     : **U**ntil     
+
+where N is the bound ( 0 indicates infinity ) 
 
 Numerical comparison operators:
 
 `<`, `>`, `<=`, `>=`, `==`, `!=`     
+
+Arithmetic Operators 
+
+`+`, `-`, `*`, `/`
 
 
 Use `(` and `)` to make statements unambiguous.
 
 Example data file
 ```
-G( (B > 3) && (A > 4) && F C )
+G:5( (B > 3) && (A > 4) && F:0 C )
 A B C 
 20.2 	10.1 	0.0 
 21.1 	1000.2 	0.0 
