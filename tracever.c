@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if(!isspace(*ptr)) break;
 	}
-	printf("LTL Formula> %s\n", linebuffer);
+	//printf("LTL Formula> %s\n", linebuffer);
 
 	//run parser 
 	yy_switch_to_buffer(yy_scan_string(linebuffer));
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
 		yylex_retval = yylex();
 	}
 	
-	//read trace values and put it into the trace table
+	//read trace values and put them in trace table
 	for(i = 0; yylex_retval && i < MAX_INPUT_SIZE; i++){
 		for(j = 0; j < num_params && yylex_retval == REAL; j++){
 			trace_vals[i][sym_table_indices[j]] = yylval.fval;
@@ -82,14 +82,19 @@ int main(int argc, char* argv[]) {
 	//set n_max to number of positions
 	n_max = i;
 
-	printf("Input length:   %-d\n", n_max);
+	//close data file and free flex stuff since we don't need it anymore
+	fclose(data_file);
+	yypop_buffer_state();
+	yylex_destroy();
+
+	//printf("Input length:   %-d\n", n_max);
 
 	//finally, run DFS
 	bool DFS_retval = DFS(final_automaton, 0, INT_MAX); 
 
-	printf("DFS calls made: %-ld\n\n", DFS_calls_made);
-	printf("Automaton returns ");
-	puts( DFS_retval ? "true" : "false" );
+	//printf("DFS calls made: %-ld\n\n", DFS_calls_made);
+	//printf("Automaton returns ");
+	//puts( DFS_retval ? "true" : "false" );
 
 	//clean up
 	delete_automaton(final_automaton);
@@ -97,10 +102,8 @@ int main(int argc, char* argv[]) {
 	for(i = 1; i < sym_index; i++)
 		free(sym_table[i]);
 
-	fclose(data_file);
-	yypop_buffer_state();
-	yylex_destroy();
 
-	return 0;
+	return DFS_retval;
+	//return 0;
 }
 
