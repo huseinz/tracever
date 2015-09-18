@@ -23,16 +23,16 @@
 [a-zA-Z][a-zA-Z0-9_-]* 	{ yylval.sval = strdup(yytext); 	return PARAM;		}
 ":"			{ 					return *yytext;		}
 "->"		      	{   					return IMP;		}
-"<"		      	{ yylval.sval = strdup(yytext); 	return OPER; 		}
-">"		      	{ yylval.sval = strdup(yytext); 	return OPER; 		}
-">="		      	{ yylval.sval = strdup(yytext); 	return OPER; 		}
-"<="		      	{ yylval.sval = strdup(yytext); 	return OPER; 		}
-"=="	 		{ yylval.sval = strdup(yytext); 	return OPER; 		}
-"!="			{ yylval.sval = strdup(yytext);		return OPER;		}
-"+"			{ yylval.sval = strdup(yytext);		return OPER;		}
-"-"			{ yylval.sval = strdup(yytext);		return OPER;		}
-"*"			{ yylval.sval = strdup(yytext);		return OPER;		}
-"/"			{ yylval.sval = strdup(yytext);		return OPER;		}
+"<"		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+">"		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+">="		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"<="		      	{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"=="	 		{ yylval.sval = strdup(yytext); 	return COMP; 		}
+"!="			{ yylval.sval = strdup(yytext);		return COMP;		}
+"+"		      	{   					return ADD_TOK;		}
+"-"		      	{   					return SUB_TOK;		}
+"*"		      	{   					return MUL_TOK;		}
+"/"		      	{   					return DIV_TOK;		}
 "||"		    	{					return OR;		} 
 "&&"	      		{   					return AND;		}
 "!"		      	{   					return NOT;		}

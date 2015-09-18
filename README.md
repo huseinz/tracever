@@ -44,6 +44,8 @@ Arithmetic Operators
 
 Use `(` and `)` to make statements unambiguous.
 
+The operands of BLTL operators must be surrounded by parentheses. 
+
 Example data file
 ```
 G:5( (B > 3) && (A > 4) && F:0 C )

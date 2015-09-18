@@ -32,15 +32,17 @@ void automaton_to_dot_aux(Automaton* a, FILE* out);
 
 %token <fval>   REAL
 %token <sval>	PARAM
-%token <sval>	OPER
 
 %right  	IMP 
 %right		OR
 %right		AND
-%precedence  	UNTIL  
+%token  	UNTIL  
 %token	  	GLOBAL 
 %token   	FUTURE
 %precedence  	NOT
+%right <sval>   COMP
+%right 		ADD_TOK SUB_TOK
+%right		MUL_TOK DIV_TOK
 
 %% 
 
@@ -63,51 +65,11 @@ ltl_parser:
 
 automaton:
 
-	GLOBAL ':' REAL automaton 	{ 	/* generate GLOBAL node */
-					if($3 < 0){
-						yyerror("Negative number in bound");
-						YYABORT;
-					}
 
-					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $4);
-					TRUE_node->left = GLOBAL_node;
-					TRUE_node->accepting = true;
-					GLOBAL_node->bound = $3 ? $3 : INT_MAX;
-					$$ = GLOBAL_node;
-					print_status("Created GLOBAL node");
+	term			{
+					$$ = $1;			
 				}
-
-	| FUTURE ':' REAL automaton 	{ 	/* generate FUTURE node */
-					if($3 < 0){
-						yyerror("Negative number in bound");
-						YYABORT;
-					}
-
-					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $4);
-					TRUE_node->left = FUTURE_node;
-					FUTURE_node->bound = $3 ? $3 : INT_MAX;
-					$$ = FUTURE_node;
-					print_status("Created FUTURE automaton node");
-				}
-
-	| automaton UNTIL ':' REAL automaton { /* generate UNTIL node */
-					if($4 < 0){
-						yyerror("Negative number in bound");
-						YYABORT;
-					}
-
-					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
-					Automaton* UNTIL_node  = create_node(OR_N, $5, UNTILB_node);
-					TRUE_node->left = UNTIL_node;
-					UNTIL_node->bound = $4 ? $4 : INT_MAX;
-					$$ = UNTIL_node;
-					print_status("Created UNTIL automaton node");
-				}
-
-	| NOT automaton 	{	/* generate NOT_n node */
+	| NOT automaton	{	/* generate NOT_n node */
 					Automaton* NOT_node = create_node(NOT_N, $2, NULL);
 					$$ = NOT_node;
 					print_status("Created NOT automaton node");
@@ -131,9 +93,50 @@ automaton:
 					$$ = IMP_node;
 					print_status("Created IMP automaton node");
 				}
-	| term			{
-					$$ = $1;			
+	| GLOBAL ':' REAL '(' automaton ')' 	{ 	/* generate GLOBAL node */
+					if($3 < 0){
+						yyerror("Negative number in bound");
+						YYABORT;
+					}
+
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* GLOBAL_node = create_node(AND_N, TRUE_node, $5);
+					TRUE_node->left = GLOBAL_node;
+					TRUE_node->accepting = true;
+					GLOBAL_node->bound = $3 ? $3 : INT_MAX;
+					$$ = GLOBAL_node;
+					print_status("Created GLOBAL node");
 				}
+
+	| FUTURE ':' REAL '(' automaton ')' 	{ 	/* generate FUTURE node */
+					if($3 < 0){
+						yyerror("Negative number in bound");
+						YYABORT;
+					}
+
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* FUTURE_node = create_node(OR_N, TRUE_node, $5);
+					TRUE_node->left = FUTURE_node;
+					FUTURE_node->bound = $3 ? $3 : INT_MAX;
+					$$ = FUTURE_node;
+					print_status("Created FUTURE automaton node");
+				}
+
+	| '(' automaton ')' UNTIL ':' REAL '(' automaton ')' { /* generate UNTIL node */
+					if($6 < 0){
+						yyerror("Negative number in bound");
+						YYABORT;
+					}
+
+					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
+					Automaton* UNTILB_node = create_node(AND_N, $2, TRUE_node);
+					Automaton* UNTIL_node  = create_node(OR_N, $8, UNTILB_node);
+					TRUE_node->left = UNTIL_node;
+					UNTIL_node->bound = $6 ? $6 : INT_MAX;
+					$$ = UNTIL_node;
+					print_status("Created UNTIL automaton node");
+				}
+
 	| '(' automaton ')'  	{ 	/* parentheses */
 					$$ = $2; 
 				}
@@ -163,13 +166,29 @@ term:
 
 					$$ = CONST_node;
 			}
-	| term OPER term {
+	| term COMP term {
 					Automaton* OPER_node = create_operator_node($2, $1, $3);
 					$$ = OPER_node;
 					free($2);
 			}
-	| '(' term ')'  {
-					$$ = $2;
+	| term ADD_TOK term {
+					Automaton* OPER_node = create_operator_node("+", $1, $3);
+					$$ = OPER_node;
+			}
+	| term SUB_TOK term {
+					Automaton* OPER_node = create_operator_node("-", $1, $3);
+					$$ = OPER_node;
+			}
+	| term MUL_TOK term {
+					Automaton* OPER_node = create_operator_node("*", $1, $3);
+					$$ = OPER_node;
+			}
+	| term DIV_TOK term {
+					Automaton* OPER_node = create_operator_node("/", $1, $3);
+					$$ = OPER_node;
+			}
+	| '(' term ')' {
+				$$ = $2;
 			}
 	;
 
