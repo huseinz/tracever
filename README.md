@@ -33,22 +33,22 @@ Binary LTL operators:
 
 where N is the bound ( 0 indicates infinity ) 
 
-Numerical comparison operators:
+Numerical Comparison Operators:
 
 `<`, `>`, `<=`, `>=`, `==`, `!=`     
 
-Arithmetic Operators 
+Arithmetic Operators:
 
 `+`, `-`, `*`, `/`
 
 
 Use `(` and `)` to make statements unambiguous.
 
-The operands of BLTL operators must be surrounded by parentheses. 
+The operands of BLTL operators must be surrounded by parentheses, as if they were functions.
 
 Example data file
 ```
-G:5( (B > 3) && (A > 4) && F:0 C )
+G:5( (B > 3) && (A > 4) && F:0(C) )
 A B C 
 20.2 	10.1 	0.0 
 21.1 	1000.2 	0.0 
