@@ -1,4 +1,4 @@
-##paramsynth trace verifier
+##trace verifier
 
 Verifies a given input using bounded linear temporal logic formulas.
 
