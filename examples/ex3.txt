@@ -1,4 +1,4 @@
-G( Damage < 200) && F(AntiInflam) && Phagocyte U Proinflam
+G:0(Damage < 200) && F:0(AntiInflam) && (Phagocyte) U:0 (Proinflam)
 #trace from parameter synthesis test run
 LPS Phagocyte Act-Phag AntiInflam Damage Proinflam
 0.0,73.0,0.0,0.0,0.0,0.0

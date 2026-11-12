@@ -44,7 +44,7 @@ Arithmetic Operators:
 
 Use `(` and `)` to make statements unambiguous.
 
-The operands of BLTL operators must be surrounded by parentheses, as if they were functions.
+The operands of `G` and `F` must be surrounded by parentheses, as if they were functions.
 
 Example data file
 ```
@@ -64,7 +64,7 @@ Example data files can be found in the 'examples' directory.
 
 ####Compiling
 
-Requires flex, bison > 3.0, gcc
+Requires flex, bison >= 2.3, gcc
 
 Just run `make`
 

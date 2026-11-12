@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
 		}
 		else if(!isspace(*ptr)) break;
 	}
-	//printf("LTL Formula> %s\n", linebuffer);
+	printf("LTL Formula> %s\n", linebuffer);
 
 	//run parser 
 	yy_switch_to_buffer(yy_scan_string(linebuffer));
@@ -87,14 +87,14 @@ int main(int argc, char* argv[]) {
 	yypop_buffer_state();
 	yylex_destroy();
 
-	//printf("Input length:   %-d\n", n_max);
+	printf("Input length:   %-d\n", n_max);
 
 	//finally, run DFS
 	bool DFS_retval = DFS(final_automaton, 0, INT_MAX); 
 
-	//printf("DFS calls made: %-ld\n\n", DFS_calls_made);
-	//printf("Automaton returns ");
-	//puts( DFS_retval ? "true" : "false" );
+	printf("DFS calls made: %-ld\n\n", DFS_calls_made);
+	printf("Automaton returns ");
+	puts( DFS_retval ? "true" : "false" );
 
 	//clean up
 	delete_automaton(final_automaton);
@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
 		free(sym_table[i]);
 
 
-	return DFS_retval;
-	//return 0;
+	//return DFS_retval;
+	return 0;
 }
 

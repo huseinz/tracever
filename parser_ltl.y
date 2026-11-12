@@ -25,7 +25,7 @@ void automaton_to_dot_aux(Automaton* a, FILE* out);
 	struct 	Automaton* node;
 }
 
-%destructor { free ($$); } <sval>
+%destructor { free ($$); } PARAM COMP
 
 %type  <node>   automaton
 %type  <node>	term
@@ -33,13 +33,15 @@ void automaton_to_dot_aux(Automaton* a, FILE* out);
 %token <fval>   REAL
 %token <sval>	PARAM
 
+%nonassoc	BARE_TERM	/* a term used directly as a formula binds loosest... */
+%nonassoc	')'		/* ...so "(x" + ")" closes the term's parentheses */
 %right  	IMP 
 %right		OR
 %right		AND
-%token  	UNTIL  
+%right		UNTIL  
 %token	  	GLOBAL 
 %token   	FUTURE
-%precedence  	NOT
+%nonassoc  	NOT
 %right <sval>   COMP
 %right 		ADD_TOK SUB_TOK
 %right		MUL_TOK DIV_TOK
@@ -66,8 +68,13 @@ ltl_parser:
 automaton:
 
 
-	term			{
+	term	%prec BARE_TERM	{
 					$$ = $1;			
+				}
+	| term COMP term {
+					Automaton* OPER_node = create_operator_node($2, $1, $3);
+					$$ = OPER_node;
+					free($2);
 				}
 	| NOT automaton	{	/* generate NOT_n node */
 					Automaton* NOT_node = create_node(NOT_N, $2, NULL);
@@ -122,17 +129,17 @@ automaton:
 					print_status("Created FUTURE automaton node");
 				}
 
-	| '(' automaton ')' UNTIL ':' REAL '(' automaton ')' { /* generate UNTIL node */
-					if($6 < 0){
+	| automaton UNTIL ':' REAL automaton %prec UNTIL { /* generate UNTIL node */
+					if($4 < 0){
 						yyerror("Negative number in bound");
 						YYABORT;
 					}
 
 					Automaton* TRUE_node   = create_node(TRUE_N, NULL, NULL);
-					Automaton* UNTILB_node = create_node(AND_N, $2, TRUE_node);
-					Automaton* UNTIL_node  = create_node(OR_N, $8, UNTILB_node);
+					Automaton* UNTILB_node = create_node(AND_N, $1, TRUE_node);
+					Automaton* UNTIL_node  = create_node(OR_N, $5, UNTILB_node);
 					TRUE_node->left = UNTIL_node;
-					UNTIL_node->bound = $6 ? $6 : INT_MAX;
+					UNTIL_node->bound = $4 ? $4 : INT_MAX;
 					$$ = UNTIL_node;
 					print_status("Created UNTIL automaton node");
 				}
@@ -165,11 +172,6 @@ term:
 					CONST_node->constant = $1;
 
 					$$ = CONST_node;
-			}
-	| term COMP term {
-					Automaton* OPER_node = create_operator_node($2, $1, $3);
-					$$ = OPER_node;
-					free($2);
 			}
 	| term ADD_TOK term {
 					Automaton* OPER_node = create_operator_node("+", $1, $3);
